@@ -1,0 +1,29 @@
+# Node.js dependencies
+node_modules/
+
+# Playwright test results and reports
+test-results/
+playwright-report/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# Optional: coverage reports
+coverage/
