@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { login } from '../ReusableMethods/Login';
+import testData from '../testData.json' assert { type: "json" }; // ES Module import
 
 test.describe.parallel('Login Tests', () => {
 
@@ -38,11 +40,10 @@ test.describe.parallel('Login Tests', () => {
   });
 
   test('Login and Validate User Page', async ({ page }) => {
-    await page.goto('https://bookmyshow0101.netlify.app/login');
-    await page.getByRole('textbox', { name: '* Email' }).fill('pkUser@gmail.com');
-    await page.getByRole('textbox', { name: '* Password' }).fill('14036');
-    await page.getByRole('button', { name: 'Login' }).click();
-
+    const { email, password } = testData.users.User;
+    await login(page,email,password);
+   
+    await page.waitForTimeout(2000); // wait 2 seconds
     await expect(page.locator('h2')).toContainText('🎬 Book Our Show');
     await expect(page.getByRole('textbox', { name: 'Type here to search for movies' })).toBeVisible();
 
@@ -50,6 +51,15 @@ test.describe.parallel('Login Tests', () => {
     await page.getByText('UserPramod').click();
     await expect(page.getByText('My Profile')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Log Out' })).toBeVisible();
+  });
+
+  test('Logout Validation', async ({ page }) => {
+    const { email, password } = testData.users.User;
+    await login(page,email,password);
+
+    await page.getByRole('menuitem', { name: 'user UserPramod' }).click();
+    await page.getByRole('link', { name: 'Log Out' }).click();
+    await expect(page.getByText('🎬 BookMyShowEmailPasswordLoginNew user? Register | Forgot Password?')).toBeVisible();
   });
 
 });
