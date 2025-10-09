@@ -4,5 +4,17 @@
       "email": "pkUser@gmail.com",
       "password": "14036"
     }
+  },
+  "Partners":{
+    "Partner":{
+      "email":"pkPartner@gmail.com",
+      "password":"14036"
+    }
+  },
+  "admins":{
+    "Admin":{
+      "email":"pkAdmin@gmail.com",
+      "password":"14036"
+    }
   }
 }
