@@ -11,10 +11,17 @@
       "password":"14036"
     }
   },
-  "admins":{
+  "Admins":{
     "Admin":{
       "email":"pkAdmin@gmail.com",
       "password":"14036"
     }
+  },
+
+  "newTheatre":{
+    "name": "PVR Inox",
+    "address": "1st main road, opposite to church street, Bangalore",
+    "mail": "pramodkumaras@gmail.com",
+    "phoneNumber": "8970880953"
   }
 }
