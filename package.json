@@ -20,5 +20,8 @@
   "description": "",
   "devDependencies": {
     "@playwright/test": "^1.55.1"
+  },
+  "dependencies": {
+    "mongodb": "^7.0.0"
   }
 }

@@ -23,5 +23,10 @@
     "address": "1st main road, opposite to church street, Bangalore",
     "mail": "pramodkumaras@gmail.com",
     "phoneNumber": "8970880953"
+  },
+  "newUser":{
+      "name":"SampleUser01",
+      "email": "sampleUser@gmail.com",
+      "password": "14036"
   }
 }
