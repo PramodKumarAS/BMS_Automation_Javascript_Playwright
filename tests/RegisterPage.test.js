@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test';
-import testData from '../testData.json' assert { type: "json" }; // ES Module import
+import testData from '../testData.json' assert { type: "json" };
 import { MongoClient } from 'mongodb';
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 test('Validate Register Page', async ({ page }) => {
     await page.getByRole('link', { name: 'Register' }).click();
@@ -19,8 +22,8 @@ test('Validate Register Page', async ({ page }) => {
 test('Validate Create new user', async ({ page }) => {
     await page.goto('https://bookmyshow0101.netlify.app/login');
 
-    const uri = 'mongodb+srv://pramodkumaras143:GdovptsaWDYmBMVq@cluster0.6zutr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'; // or your MongoDB Atlas URI
-    const client = new MongoClient(uri);
+    console.log("this is url",process.env.Mongo_Url)
+    const client = new MongoClient(process.env.Mongo_Url);
 
     const {name,email,password} = testData.newUser;
 
@@ -41,7 +44,8 @@ test('Validate Create new user', async ({ page }) => {
         const collection = db.collection('users');
 
         const record = await collection.findOne({ email: email });
-        console.log("ohh record",record);
-        expect(record).not.toBeNull(); // ✅ record created
+        expect(record.name).toBe(name);
+        expect(record.email).toBe(email);
+        expect(record.password).not.toBe(password);
 
 });
