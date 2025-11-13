@@ -1,9 +1,6 @@
 import { test, expect } from '@playwright/test';
 import testData from '../testData.json' assert { type: "json" };
-import { MongoClient } from 'mongodb';
-import dotenv from 'dotenv';
-dotenv.config();
-
+import { MongoConnect,findMongoRecord } from '../ReusableMethods/Mongo';
 
 test('Validate Register Page', async ({ page }) => {
     await page.getByRole('link', { name: 'Register' }).click();
@@ -22,9 +19,6 @@ test('Validate Register Page', async ({ page }) => {
 test('Validate Create new user', async ({ page }) => {
     await page.goto('https://bookmyshow0101.netlify.app/login');
 
-    console.log("this is url",process.env.Mongo_Url)
-    const client = new MongoClient(process.env.Mongo_Url);
-
     const {name,email,password} = testData.newUser;
 
     await page.getByRole('link', { name: 'Register' }).click();
@@ -38,14 +32,12 @@ test('Validate Create new user', async ({ page }) => {
     await page.locator('#isPartner').getByText('No').click();
     await page.getByRole('button', { name: 'Register' }).click();
 
-    //Check User is created in Mongo
-        await client.connect();
-        const db = client.db('test');
-        const collection = db.collection('users');
+    //Validate Registered User in Mongo      
+    await MongoConnect("test", "users");
+    const record = await findMongoRecord(email);
 
-        const record = await collection.findOne({ email: email });
-        expect(record.name).toBe(name);
-        expect(record.email).toBe(email);
-        expect(record.password).not.toBe(password);
+    expect(record.name).toBe(name);
+    expect(record.email).toBe(email);
+    expect(record.password).not.toBe(password);
 
 });
