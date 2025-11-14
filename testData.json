@@ -28,5 +28,8 @@
       "name":"SampleUser01",
       "email": "sampleUser@gmail.com",
       "password": "14036"
+  },
+  "movies":{
+    "name":"Avengers: Endgame"
   }
 }

@@ -22,4 +22,12 @@ async function findMongoRecord(email) {
   return await collection.findOne({ email });
 }
 
+async function findMongoRecord() {
+  if (!collection) throw new Error("Mongo not initialized");
+
+  
+  return await collection.findOne();
+}
+
+
 export { MongoConnect, findMongoRecord };
