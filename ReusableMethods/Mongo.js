@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { ObjectId } from "mongodb";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -22,7 +23,13 @@ async function findMongoRecord(email) {
   return await collection.findOne({ email });
 }
 
-async function findMongoRecord() {
+async function findRecordById(id) {
+  if (!collection) throw new Error("Mongo not initialized");
+
+  return await collection.findOne({ _id: new ObjectId(id) });
+}
+
+async function findMongoRecordOne() {
   if (!collection) throw new Error("Mongo not initialized");
 
   
@@ -30,4 +37,4 @@ async function findMongoRecord() {
 }
 
 
-export { MongoConnect, findMongoRecord };
+export { MongoConnect, findMongoRecord,findMongoRecordOne,findRecordById };

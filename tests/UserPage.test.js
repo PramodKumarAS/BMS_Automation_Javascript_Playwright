@@ -1,7 +1,8 @@
 import {test,expect} from '@playwright/test';
 import { login } from '../ReusableMethods/Login';
 import testData from '../testData.json' assert { type: "json" }; // ES Module import
-import { MongoConnect,findMongoRecord } from '../ReusableMethods/Mongo';
+import { MongoConnect,findMongoRecord,findMongoRecordOne,findRecordById } from '../ReusableMethods/Mongo';
+import { formatUIDate } from '../ReusableMethods/TimeFormat';
 
 test.describe.parallel('User Tests',()=>{
 
@@ -54,38 +55,45 @@ test.describe.parallel('User Tests',()=>{
     });
 
     test('Validate Booking a Show', async ({ page }) => {
-        const {name} = testData.movies;
-        const {email} = testData.users;
-      
-        await MongoConnect("test", "theatres");
-        const TheatreRecord = await findMongoRecord();
+        const { password } = testData.users.User;
+        const logginMail = testData.users.User.email;
+        await login(page,logginMail,password);
+
 
         await MongoConnect("test", "shows");
-        const showRecord = await findMongoRecord();
+        const showRecord = await findMongoRecordOne();
+        const showdate = formatUIDate(showRecord.date); 
+        const MovieId = showRecord.movie?.toString().replace("ObjectId(", "").replace(")", "").replace(/"/g, "");
+        const theatreId = showRecord.theatre?.toString().replace("ObjectId(", "").replace(")", "").replace(/"/g, "");
 
+        await MongoConnect("test", "movies");
+        const movieRecord = await findRecordById(MovieId);
+
+        await MongoConnect("test", "theatres");
+        const theatreRecord = await findRecordById(theatreId);
+        
         await page.getByRole('textbox', { name: 'Type here to search for movies' }).click();
-        await page.getByRole('textbox', { name: 'Type here to search for movies' }).fill(name);
-        await expect(page.locator('div').filter({ hasText: /^Avengers: Endgame$/ }).nth(3)).toBeVisible();
+        await page.getByRole('textbox', { name: 'Type here to search for movies' }).fill(movieRecord.movieName);
+        await expect(page.locator('div').filter({ hasText: new RegExp(`^${movieRecord.movieName}$`) }).nth(3)).toBeVisible();
         await page.getByRole('img', { name: 'Movie Poster' }).click();
-
 
         await page.getByPlaceholder('default size').fill('2025-11-11');
         await expect(page.getByRole('button', { name: 'Book Show - 10:00 AM' })).toBeVisible();
         await page.getByRole('button', { name: 'Book Show - 10:00 AM' }).click();
 
-        await expect(page.locator('h1')).toHaveText(name);
-        await expect(page.getByText('Theatre:')).toHaveText(`${TheatreRecord.name}, ${TheatreRecord.address}`);
-        await expect(page.getByText('Show Name:')).toHaveText(showRecord.name);
-        await expect(page.getByText('Date & Time:')).toHaveText(showRecord.date);
-        await expect(page.getByText('Ticket Price:')).toHaveText(showRecord.ticketPrice);
-        await expect(page.getByText('Total Seats:')).toHaveText(showRecord.totalSeats);
-        await expect(page.getByText('Available Seats:')).toHaveText(showRecord.totalSeats -showRecord.totalSeats);//
+        await expect(page.locator('h1')).toHaveText(movieRecord.movieName);
+        await expect(page.getByText('Theatre:')).toHaveText(`Theatre: ${theatreRecord.name}, ${theatreRecord.address}`);
+        await expect(page.locator("//h3[span[contains(., 'Show Name:')]]")).toHaveText(`Show Name: ${showRecord.name}`);
+        await expect(page.locator("//h3[span[contains(., 'Date & Time:')]]")).toHaveText(`Date & Time: ${showdate} at ${showRecord.time} AM`);
+        await expect(page.locator("//h3[span[contains(., 'Ticket Price:')]]")).toHaveText(`Ticket Price: Rs. ${showRecord.ticketPrice.toString()}/-`);
+        await expect(page.locator("//h3[span[contains(., 'Total Seats:')]]")).toHaveText(showRecord.totalSeats.toString());
+        await expect(page.locator("//h3[span[contains(., 'Available Seats:')]]")).toHaveText(showRecord.totalSeats -showRecord.totalSeats);//
         await expect(page.locator('div').filter({ hasText: /^Screen this side, you will be watching in this direction$/ })).toBeVisible();
 
         await page.getByRole('button', { name: '1', exact: true }).click();
         await page.getByRole('button', { name: '2', exact: true }).click();
-        await page.getByRole('button', { name: '11', exact: true }).click();
-        await page.getByRole('button', { name: '12', exact: true }).click();
+        await page.getByRole('button', { name: '11',exact: true }).click();
+        await page.getByRole('button', { name: '12',exact: true }).click();
 
         await expect(page.getByText('Selected Seats:')).toHaveText("1,2,11,12");
         await expect(page.getByText('Total Price:')).toHaveText(showRecord.ticketPrice*4);
