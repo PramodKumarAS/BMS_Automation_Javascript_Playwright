@@ -20,7 +20,6 @@ test('Validate Admin Page', async ({ page }) => {
     await expect(page.getByRole('columnheader', { name: 'Action' })).toBeVisible();
 });
 
-
 test('Validate Add Movie Dialog Modal', async ({ page }) => {
     const { email, password } = testData.Admins.Admin;
     await login(page,email,password);
@@ -46,4 +45,29 @@ test('Validate Add Movie Dialog Modal', async ({ page }) => {
     //After Opening modal should be visible
     await page.getByRole('button', { name: 'Add Movie' }).click();
     await expect(page.getByText('Add MovieMovie')).toBeVisible();
+});
+
+test('Validate Add New Movie', async ({ page }) => {
+
+    const { email, password } = testData.Admins.Admin;
+    await login(page,email,password);
+    
+    const { Name,Description,MovieDuration,Language,ReleaseDate,MovieGenre,PosterURL  } = testData.newMovie;
+
+    await page.getByRole('button',  { name: 'Add Movie' }).click();
+    await page.getByRole('textbox', { name: '* Movie Name' }).click();
+    await page.getByRole('textbox', { name: '* Movie Name' }).fill(Name);
+    await page.getByRole('textbox', { name: '* Description' }).click();
+    await page.getByRole('textbox', { name: '* Description' }).fill(Description);
+    await page.getByRole('spinbutton', { name: '* Movie Duration (in min)' }).click();
+    await page.getByRole('spinbutton', { name: '* Movie Duration (in min)' }).fill(MovieDuration);
+    await page.getByRole('combobox', { name: '* Select Movie Language' }).click();
+    await page.getByTitle(Language).locator('div').click();
+    await page.getByRole('textbox',  { name: '* Release Date' }).fill(ReleaseDate);
+    await page.getByRole('combobox', { name: '* Select Movie Genre' }).click();
+    await page.getByTitle(MovieGenre).locator('div').click();
+    await page.getByRole('textbox', { name: '* Poster URL' }).click();
+    await page.getByRole('textbox', { name: '* Poster URL' }).fill(PosterURL);
+    await page.getByRole('button',  { name: 'Submit the Data' }).click();
+
 });

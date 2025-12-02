@@ -4,9 +4,7 @@ import testData from '../testData.json' assert { type: "json" };
 import { MongoConnect,deleteMongoRecords,findMongoRecordOne,findMongoRecordById,findMongoRecordByShowId, updateMongoRecordToEmptyArray } from '../ReusableMethods/Mongo';
 import { formatUIDate } from '../ReusableMethods/TimeFormat';
 
-test.describe.parallel('User Tests',()=>{
-
-    test('Validate Searching Movie',async({page})=>{
+test('Validate Searching Movie',async({page})=>{
         const { email, password } = testData.users.User;
         await login(page,email,password);
 
@@ -24,9 +22,9 @@ test.describe.parallel('User Tests',()=>{
         await expect(page.getByRole('main')).toContainText(movieName_withPrefix);
         await expect(page.getByRole('main')).toContainText(movieName_withPrefix);
         await expect(page.getByRole('main')).toContainText(movieName_withPrefix);
-    });
+});
 
-    test('Validate Single movie', async ({ page }) => {
+test('Validate Single movie', async ({ page }) => {
         const { email, password } = testData.users.User;
         await login(page,email,password);
 
@@ -39,9 +37,9 @@ test.describe.parallel('User Tests',()=>{
         await expect(page.locator('div').filter({ hasText: /^Choose the date:$/ })).toBeVisible();
         await expect(page.getByRole('main')).toContainText('Currently, no theatres available for this movie!');
         await expect(page.getByRole('img', { name: 'Movie Poster' })).toBeVisible();
-    });
+});
 
-    test('Validate My Profile', async ({ page }) => {
+test('Validate My Profile', async ({ page }) => {
         const { email, password } = testData.users.User;
         await login(page,email,password);
 
@@ -52,9 +50,9 @@ test.describe.parallel('User Tests',()=>{
         await expect(page.locator('img')).toBeVisible();
         await expect(page.locator('div').filter({ hasText: /^My Bookings$/ }).first()).toBeVisible();
         await expect(page.locator('div').filter({ hasText: /^Settings$/ }).first()).toBeVisible();
-    });
+});
 
-    test('Validate Booking a Show E2E', async ({ page }) => {
+test('Validate User Booking a Show E2E', async ({ page }) => {
         const { password } = testData.users.User;
         const logginMail = testData.users.User.email;
         await login(page,logginMail,password);
@@ -136,5 +134,4 @@ test.describe.parallel('User Tests',()=>{
         //Update the BookedSeats to empty
         await MongoConnect("test", "shows");
         await updateMongoRecordToEmptyArray(showId,"bookedSeats");
-    });
 });
