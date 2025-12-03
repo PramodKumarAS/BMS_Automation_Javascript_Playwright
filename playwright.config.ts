@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   timeout: 30 * 1000,
-  reporter: [['html', { open: 'never' }]],
+  reporter: "allure-playwright",
   use: {
     headless: false,       // must be false to see maximized window
     screenshot: 'only-on-failure',
@@ -19,6 +19,8 @@ export default defineConfig({
         launchOptions: {
           args: ['--start-maximized'], // launch maximized
         },
+        screenshot:"on",
+        video:"on"
       },
     },
   ],

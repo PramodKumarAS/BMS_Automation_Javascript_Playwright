@@ -19,7 +19,8 @@
   "homepage": "https://github.com/PramodKumarAS/BMS_Automation_Javascript_Playwright#readme",
   "description": "",
   "devDependencies": {
-    "@playwright/test": "^1.55.1"
+    "@playwright/test": "^1.55.1",
+    "allure-playwright": "^3.4.3"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
