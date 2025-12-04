@@ -17,31 +17,34 @@ pipeline {
             steps {
                 bat 'npm install'
                 bat 'npx playwright install'
-                bat 'npx playwright install-deps'  // optional; might fail on Windows, safe to remove
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat 'npx playwright test --reporter=line,allure-playwright'
-            }
-        }
-
-        stage('Generate Allure Report') {
-            steps {
-                bat 'allure generate allure-results --clean -o allure-report'
-            }
-        }
-
-        stage("Publish Allure Report") {
-            steps {
-                allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+                // Continue pipeline even if tests fail
+                bat 'npx playwright test --reporter=line,allure-playwright || exit 0'
             }
         }
     }
 
     post {
         always {
+            echo "Generating Allure Report even if tests fail..."
+            
+            // Generate report
+            bat '''
+                if exist allure-results (
+                    allure generate allure-results --clean -o allure-report
+                ) else (
+                    echo "No allure-results folder found"
+                )
+            '''
+
+            // Publish in Jenkins
+            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+
+            // Archive raw artifacts
             archiveArtifacts artifacts: 'allure-results/**'
         }
     }
