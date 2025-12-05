@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'windows-playwright' }
+    agent none
 
     tools {
         nodejs "NodeJS-18"
@@ -8,12 +8,14 @@ pipeline {
     stages {
 
         stage('Checkout') {
+            agent { label 'windows-controller' }
             steps {
                 checkout scm
             }
         }
 
         stage('Install Dependencies') {
+            agent { label 'windows-install' }
             steps {
                 bat 'npm ci'
                 bat 'npx playwright install'
@@ -21,6 +23,7 @@ pipeline {
         }
 
         stage('Run Tests') {
+            agent { label 'windows-playwright' }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     bat 'npx playwright test --reporter=line,allure-playwright'
@@ -31,18 +34,21 @@ pipeline {
 
     post {
         always {
-            echo "Generating Allure Report even if tests fail..."
-            
-            bat '''
-                if exist allure-results (
-                    allure generate allure-results --clean -o allure-report
-                ) else (
-                    echo "No allure-results folder found"
-                )
-            '''
+            agent { label 'windows-controller' }
+            steps {
+                echo "Generating Allure Report..."
+                
+                bat '''
+                    if exist allure-results (
+                        allure generate allure-results --clean -o allure-report
+                    ) else (
+                        echo "No allure-results folder found"
+                    )
+                '''
 
-            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-            archiveArtifacts artifacts: 'allure-results/**'
+                allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+                archiveArtifacts artifacts: 'allure-results/**'
+            }
         }
     }
 }
