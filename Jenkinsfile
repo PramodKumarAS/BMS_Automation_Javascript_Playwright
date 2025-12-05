@@ -31,13 +31,13 @@ pipeline {
             }
         }
     }
-
+    
     post {
         always {
-            agent { label 'windows-controller' }
-            steps {
-                echo "Generating Allure Report..."
-                
+            node('windows-playwright') {
+
+                echo "Generating Allure Report even if tests fail..."
+
                 bat '''
                     if exist allure-results (
                         allure generate allure-results --clean -o allure-report
@@ -51,4 +51,5 @@ pipeline {
             }
         }
     }
+
 }
