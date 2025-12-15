@@ -1,6 +1,11 @@
 pipeline {
     agent none
 
+    triggers {
+        // Runs every day at 2 AM (Jenkins server time)
+        cron('H 2 * * *')
+    }
+
     stages {
 
         stage('Checkout') {
