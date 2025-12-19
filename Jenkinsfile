@@ -1,66 +1,43 @@
 pipeline {
-    agent none
+    agent any
 
-    triggers {
-        // Runs every day at 2 AM (Jenkins server time)
-        cron('H 2 * * *')
+    tools {
+        nodejs 'NodeJS-18'
     }
 
     stages {
 
-        stage('Checkout') {
-            agent { label 'windows-controller' }
+        stage('Install') {
             steps {
                 checkout scm
-            }
-        }
-
-        stage('Install Dependencies') {
-            agent { label 'windows-install' }
-
-            tools {
-                nodejs 'NodeJS-18'
-            }
-
-            steps {
-                bat 'node -v'
-                bat 'npm ci'
-                bat 'npx playwright install'
+                sh 'npm ci'
             }
         }
 
         stage('Run Tests') {
-            agent { label 'windows-playwright' }
-
-            tools {
-                nodejs 'NodeJS-18'
-            }
-
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    bat 'npx playwright test --reporter=line,allure-playwright'
-                }
+                sh 'npx playwright test'
+            }
+        }
+
+        stage('Generate Allure Report') {
+            steps {
+                sh '''
+                    if [ -d allure-results ]; then
+                        allure generate allure-results --clean -o allure-report
+                    else
+                        echo "No allure-results found"
+                    fi
+                '''
             }
         }
     }
 
     post {
         always {
-            node('windows-playwright') {
-
-                echo 'Generating Allure Report (always)'
-
-                bat '''
-                    if exist allure-results (
-                        allure generate allure-results --clean -o allure-report
-                    ) else (
-                        echo No allure-results folder found
-                    )
-                '''
-
-                allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-                archiveArtifacts artifacts: 'allure-results/**'
-            }
+            archiveArtifacts artifacts: 'allure-results/**', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'allure-report/**', allowEmptyArchive: true
+            allure results: [[path: 'allure-results']]
         }
     }
 }
