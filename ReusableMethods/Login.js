@@ -8,7 +8,7 @@ async function login(page, email, password) {
   await page.getByRole('textbox', { name: '* Password' }).fill(password);
   await page.getByRole('button', { name: 'Login' }).click();   
   
-  await page.waitForTimeout(5000); // wait 5 seconds
+  await page.waitForTimeout(5000); 
 }
 
 module.exports = { login };
