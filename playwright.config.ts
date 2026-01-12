@@ -5,7 +5,7 @@ export default defineConfig({
   timeout: 30 * 1000,
   reporter: "allure-playwright",
   use: {
-    headless: false,       // must be false to see maximized window
+    headless: true,       // must be false to see maximized window
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     ignoreHTTPSErrors: true,
