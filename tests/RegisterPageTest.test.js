@@ -3,6 +3,7 @@ import testData from '../testData.json' assert { type: "json" };
 import { MongoConnect,findMongoRecord } from '../ReusableMethods/Mongo';
 
 test('Validate Register Page', async ({ page }) => {
+    await page.goto('https://bookmyshow0101.netlify.app/login');
     await page.getByRole('link', { name: 'Register' }).click();
   
     await expect(page.getByText('Register to BookMyShowCreate your account in just a few stepsFull')).toBeVisible();
