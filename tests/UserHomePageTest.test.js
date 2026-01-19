@@ -3,6 +3,22 @@ import { login } from '../ReusableMethods/Login';
 import testData from '../testData.json' assert { type: "json" }; 
 import { MongoConnect,deleteMongoRecords,findMongoRecordOne,findMongoRecordById,findMongoRecordByShowId, updateMongoRecordToEmptyArray } from '../ReusableMethods/Mongo';
 import { formatUIDate } from '../ReusableMethods/TimeFormat';
+let createdBookingShowId = null;
+
+test.afterAll(async () => {
+  try {
+        //Delete the Booking records 
+        await MongoConnect("test", "bookings");
+        await deleteMongoRecords();
+
+        //Update the BookedSeats to empty
+        await MongoConnect("test", "shows");
+        await updateMongoRecordToEmptyArray(createdBookingShowId,"bookedSeats");  
+        createdBookingShowId=null;             
+  } catch (error) {
+        console.error("Teardown Failed",error);
+  }
+});
 
 test('Validate Searching Movie',async({page})=>{
         const { email, password } = testData.users.User;
@@ -58,13 +74,13 @@ test('Validate User Booking a Show E2E', async ({ page }) => {
         const logginMail = testData.users.User.email;
         await login(page,logginMail,password);
 
-
         await MongoConnect("test", "shows");
         const showRecord = await findMongoRecordOne();
         const showdate = formatUIDate(showRecord.date); 
         const MovieId = showRecord.movie?.toString().replace("ObjectId(", "").replace(")", "").replace(/"/g, "");
         const theatreId = showRecord.theatre?.toString().replace("ObjectId(", "").replace(")", "").replace(/"/g, "");
         const showId = showRecord._id?.toString().replace("ObjectId(", "").replace(")", "").replace(/"/g, "");
+        createdBookingShowId = showId;
 
         await MongoConnect("test", "movies");
         const movieRecord = await findMongoRecordById(MovieId);
@@ -77,7 +93,7 @@ test('Validate User Booking a Show E2E', async ({ page }) => {
         await expect(page.locator('div').filter({ hasText: new RegExp(`^${movieRecord.movieName}$`) }).nth(3)).toBeVisible();
         await page.getByRole('img', { name: 'Movie Poster' }).click();
 
-        await page.getByPlaceholder('default size').fill('2025-11-18');
+        await page.getByPlaceholder('default size').fill('2026-01-14'); //TODO = get the date from mongo or api
         await expect(page.getByRole('button', { name: 'Book Show - 10:00 AM' })).toBeVisible();
         await page.getByRole('button', { name: 'Book Show - 10:00 AM' }).click();
 
@@ -127,12 +143,4 @@ test('Validate User Booking a Show E2E', async ({ page }) => {
         const now = Date.now();
         expect(createdTime).toBeGreaterThan(now - 30000);
         expect(updatedTime).toBeGreaterThan(now - 30000);
-
-        //Delete the Booking records 
-        await MongoConnect("test", "bookings");
-        await deleteMongoRecords();
-
-        //Update the BookedSeats to empty
-        await MongoConnect("test", "shows");
-        await updateMongoRecordToEmptyArray(showId,"bookedSeats");
 });
