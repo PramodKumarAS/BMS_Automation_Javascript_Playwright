@@ -1,0 +1,200 @@
+# BMS Automation Framework
+
+## Overview
+
+This repository contains a **Playwright-based UI automation framework** designed for scalability, maintainability, and CI execution. The framework follows clear separation of concerns (Pages, Fixtures, Services, Utils, Tests) and supports role-based functional testing with Allure reporting and CI integration.
+
+The structure is intentionally simple but production-ready, suitable for both team collaboration and interview demonstrations.
+
+---
+
+## Tech Stack
+
+* **Playwright** (UI Automation)
+* **JavaScript** (Test, Pages, Fixtures)
+* **TypeScript** (Playwright configuration)
+* **Allure** (Test Reporting)
+* **Node.js / npm**
+* **Jenkins / GitHub Actions** (CI-ready)
+
+---
+
+## Project Structure
+
+```
+BMS_AUTOMATION
+│
+├── fixtures/
+│   └── auth.fixture.js        # Authentication & logged-in state fixtures
+│
+├── pages/
+│   ├── login.page.js          # Login page object
+│   ├── user-home.page.js      # User home/dashboard page object
+│   └── user-profile.page.js   # User profile page object
+│
+├── services/
+│   └── mongo.service.js       # Database / backend interaction utilities
+│
+├── utils/
+│   └── time.util.js           # Stateless helper utilities (date/time, formatting)
+│
+├── test-data/
+│   └── user.json              # Test data for user scenarios
+│
+├── tests/ui-functional/
+│   ├── admin/                 # Admin role test cases
+│   ├── partner/               # Partner role test cases
+│   ├── common/auth/           # Common authentication-related tests
+│   └── user/
+│       └── user-home.spec.js  # User home flow tests
+│
+├── playwright.config.ts       # Playwright configuration
+├── Jenkinsfile                # CI pipeline definition
+├── package.json               # Project dependencies and scripts
+└── .env                       # Environment variables (not committed)
+```
+
+---
+
+## Architecture Principles
+
+### 1. Page Object Model (POM)
+
+* All UI locators and actions are encapsulated inside `*.page.js` files
+* Tests never directly interact with selectors
+* Improves maintainability when UI changes
+
+### 2. Fixtures for State Management
+
+* `auth.fixture.js` is responsible for authentication-related setup
+* Fixtures provide **ready-to-use state** (e.g., logged-in user)
+* Avoids repetitive login steps inside tests
+
+### 3. Services Layer
+
+* `services/` contains backend, API, or database interactions
+* Keeps non-UI logic out of tests and pages
+* Enables hybrid API + UI testing
+
+### 4. Utilities Layer
+
+* `utils/` contains pure, stateless helper functions
+* No Playwright or test logic allowed here
+
+### 5. Role-Based Test Organization
+
+Tests are grouped by business roles:
+
+* `admin`
+* `partner`
+* `user`
+
+This makes ownership, execution, and scaling easier.
+
+---
+
+## Test Naming Conventions
+
+| File Type   | Convention    | Example             |
+| ----------- | ------------- | ------------------- |
+| Test        | `.spec.js`    | `user-home.spec.js` |
+| Page Object | `.page.js`    | `user-home.page.js` |
+| Fixture     | `.fixture.js` | `auth.fixture.js`   |
+| Service     | `.service.js` | `mongo.service.js`  |
+| Utility     | `.util.js`    | `time.util.js`      |
+
+---
+
+## Running Tests
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Run all tests
+
+```bash
+npx playwright test
+```
+
+### Run a specific test
+
+```bash
+npx playwright test tests/ui-functional/user/user-home.spec.js
+```
+
+### Run tests in headed mode
+
+```bash
+npx playwright test --headed
+```
+
+---
+
+## Reports
+
+### Playwright HTML Report
+
+After execution:
+
+```bash
+npx playwright show-report
+```
+
+### Allure Report
+
+```bash
+allure generate allure-results --clean
+allure open
+```
+
+> In CI, Allure reports are generated automatically.
+
+---
+
+## CI Integration
+
+* `Jenkinsfile` defines the pipeline steps
+* Supports headless execution
+* Generates Playwright + Allure reports
+* Suitable for GitHub Actions or Jenkins
+
+---
+
+## Environment Configuration
+
+Environment variables are managed using `.env`:
+
+```
+BASE_URL=
+USERNAME=
+PASSWORD=
+```
+
+> `.env` is excluded from version control.
+
+---
+
+## Design Goals
+
+* Clear separation of concerns
+* Minimal abstraction, maximum readability
+* Scalable for teams and CI
+* Easy onboarding for new contributors
+
+---
+
+## Future Enhancements (Optional)
+
+* TypeScript migration for tests and pages
+* API + UI combined test flows
+* Role-based storageState usage
+* Test tagging and project-based execution
+
+---
+
+## Summary
+
+This framework is designed to be **clean, scalable, and production-ready** while remaining easy to understand. It follows industry conventions used in mature Playwright automation projects and is suitable for real-world applications as well as technical interviews.

@@ -20,10 +20,10 @@
   "description": "",
   "devDependencies": {
     "@playwright/test": "^1.55.1",
-    "allure-playwright": "^3.4.3"
+    "allure-playwright": "^3.4.3",
+    "dotenv": "^17.2.3"
   },
   "dependencies": {
-    "dotenv": "^17.2.3",
     "mongodb": "^7.0.0"
   }
 }

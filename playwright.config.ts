@@ -1,15 +1,18 @@
 import { defineConfig } from '@playwright/test';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export default defineConfig({
   testDir: './tests',
   timeout: 30 * 1000,
   reporter: "allure-playwright",
   use: {
-    headless: true,       // must be false to see maximized window
+    baseURL:process.env.Base_URL,
+    headless: false,       
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     ignoreHTTPSErrors: true,
-    viewport: null,        // full window size
+    viewport: null,        
   },
   projects: [
     {
@@ -17,7 +20,7 @@ export default defineConfig({
       use: {
         browserName: 'chromium',
         launchOptions: {
-          args: ['--start-maximized'], // launch maximized
+          args: ['--start-maximized'], 
         },
         screenshot:"on",
         video:"on"
