@@ -1,6 +1,7 @@
 {
   "users": {
     "User": {
+      "userName":"UserPramod",
       "email": "pkUser@gmail.com",
       "password": "14036"
     }
