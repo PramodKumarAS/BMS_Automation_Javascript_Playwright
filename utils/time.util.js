@@ -1,17 +1,18 @@
-function formatUIDate(date) {
-  const d = new Date(date);
+export default function formatDateWithOrdinal(date = new Date()) {
+  const day = date.getDate();
+  const year = date.getFullYear();
 
-  const month = d.toLocaleString("en-US", { month: "short" }); // Nov
-  const day = d.getDate(); // 11
-  const year = d.getFullYear(); // 2025
+  const month = date.toLocaleString('en-US', { month: 'short' });
 
-  const suffix =
-    day === 1 || day === 21 || day === 31 ? "st" :
-    day === 2 || day === 22 ? "nd" :
-    day === 3 || day === 23 ? "rd" : "th";
+  function getOrdinal(n) {
+    if (n > 3 && n < 21) return 'th';
+    switch (n % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  }
 
-  return `${month} ${day}${suffix} ${year}`;
+  return `${month} ${day}${getOrdinal(day)} ${year}`;
 }
-
-
-export {formatUIDate};

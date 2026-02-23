@@ -28,6 +28,10 @@ class HomePage{
         return this.page.getByRole('heading', { name: '🎬 Book Our Show' });
     }
 
+    async openMovie(movieName){
+        await this.page.getByRole('img', { name: 'Movie Poster' }).click();
+    }
+
     async goToProfile(){
         await this.openUserMenu();
         await this.profileLink.click();

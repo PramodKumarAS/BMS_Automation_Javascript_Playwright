@@ -56,6 +56,14 @@ async function updateMongoRecordToEmptyArray(id, arrayFieldName) {
   );
 }
 
+async function updateOne(id,fieldName,value) {
+  if(!collection) throw new Error('Mongo not initialized');
+
+  await collection.updateOne(
+    { _id: new ObjectId(id) },
+    {$set:{[fieldName]:value}}
+  );
+}
 export { 
   MongoConnect, 
   findMongoRecord,
@@ -63,5 +71,6 @@ export {
   findMongoRecordById,
   findMongoRecordByShowId,
   deleteMongoRecords,
-  updateMongoRecordToEmptyArray 
+  updateMongoRecordToEmptyArray ,
+  updateOne
 };
