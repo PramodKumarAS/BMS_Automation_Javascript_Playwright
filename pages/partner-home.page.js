@@ -66,6 +66,16 @@ class PartnerPage{
 
         return new ShowsModal(this.page);
     }
+
+    async clickShowsByTheatre(theatreName){
+        const row = this.page.locator('tr.ant-table-row',{
+            has: this.page.locator('td:first-child',{hasText:theatreName})
+        });
+
+        await row.getByRole('button',{name:'+ Shows'}).click();
+
+        return new ShowsModal(this.page);
+    }
     
 }
 

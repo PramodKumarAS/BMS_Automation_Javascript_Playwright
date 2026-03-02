@@ -34,6 +34,12 @@ class AdminHomePage{
         return this.page.getByRole('button',{ name: 'delete' }).first();
     }
 
+    async openAddMovieModal(){
+        await this.addMovieButton.click()
+
+        return new MovieModal(this.page);
+    }
+    
     async openEditMovieModal(){
         await this.editMovieButton.click();
 
@@ -52,6 +58,28 @@ class AdminHomePage{
 
     get theatresTable(){
         return this.page.getByRole('table');
+    }
+
+    async getRecordCountBefore(){
+        return this.page.locator('table tbody tr').count();
+    }
+
+    async getRecordCount(){
+        let count=0;
+        const arrowNextButton = this.page.getByRole('button', { name: 'right' });
+
+        while(await arrowNextButton.isEnabled()){
+            count=count + await this.page.locator('table tbody tr').count();
+            await arrowNextButton.click();
+        }
+
+        count=count + await this.page.locator('table tbody tr').count();
+    
+        return count;
+    }
+
+    async getRowData(movieName){
+        return this.page.locator('table tbody tr').filter({hasText: movieName});
     }
 }
 

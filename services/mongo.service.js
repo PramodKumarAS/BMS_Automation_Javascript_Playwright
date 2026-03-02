@@ -34,7 +34,6 @@ async function findMongoRecordOne() {
   return await collection.findOne();
 }
 
-
 async function findMongoRecordByShowId(id) {
   if (!collection) throw new Error("Mongo not initialized");
 
@@ -45,6 +44,12 @@ async function deleteMongoRecords() {
   if (!collection) throw new Error("Mongo not initialized");
 
   await collection.deleteMany({});
+}
+
+async function deleteOne(params,value) {
+  if (!collection) throw new Error("Mongo not initialized");
+
+  await collection.deleteOne({[params]:value});
 }
 
 async function updateMongoRecordToEmptyArray(id, arrayFieldName) {
@@ -72,5 +77,6 @@ export {
   findMongoRecordByShowId,
   deleteMongoRecords,
   updateMongoRecordToEmptyArray ,
-  updateOne
+  updateOne,
+  deleteOne
 };
