@@ -1,4 +1,4 @@
-import { test,expect } from "../../../fixtures/auth.fixture";
+import { test,expect } from "../../../../fixtures/auth.fixture";
 
 test('User should see tabs and open Theatre tabs on admin home page',async({loggedInAdminPage})=>{
     await expect(loggedInAdminPage.heading).toBeVisible();

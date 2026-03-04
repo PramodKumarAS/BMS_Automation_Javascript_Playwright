@@ -1,6 +1,6 @@
-import {test,expect} from '../../fixtures/auth.fixture'
-import { deleteOne, MongoConnect } from '../../services/mongo.service';
-import {shows} from '../../test-data/show.json'
+import {test,expect} from '../../../fixtures/auth.fixture';
+import { deleteOne, MongoConnect } from '../../../services/mongo.service';
+import {shows} from '../../../test-data/show.json';
 
 test.afterAll(async ()=>{
     await MongoConnect('test','shows');
