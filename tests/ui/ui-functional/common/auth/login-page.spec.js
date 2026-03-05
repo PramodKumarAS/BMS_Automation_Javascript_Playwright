@@ -1,4 +1,4 @@
-import { test,expect } from "../../../../fixtures/auth.fixture";
+import { test,expect } from "../../../../../fixtures/auth.fixture";
 
 test('User should see login inputs,Register link and Forgot password link on login page',async({loginPage})=>{   
     await expect(loginPage.heading).toBeVisible();

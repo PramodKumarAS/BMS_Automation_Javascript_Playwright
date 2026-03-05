@@ -15,6 +15,17 @@ class MovieModal{
         return this.page.getByRole('spinbutton',{name:'* Movie Duration (in min)'})
     }
     
+    get slctMovieLanguage(){
+        return this.page.getByRole('combobox', { name: '* Select Movie Language' });        
+    }
+    get slctMovieGenre(){
+        return this.page.getByRole('combobox', { name: '* Select Movie Genre' });        
+    }
+
+    get releaseDate(){
+        return this.page.getByRole('textbox',{name:'* Release Date'})
+    }
+
     async selectMovieLanuage(language) {
         // Open dropdown
         await this.page.getByRole('combobox', { name: '* Select Movie Language' }).click();
@@ -32,16 +43,12 @@ class MovieModal{
 
         await option.click();
     }
-    
-    get releaseDate(){
-        return this.page.getByRole('textbox',{name:'* Release Date'})
-    }
-    
+  
     async selectMovieGenre(genre) {
         // Open dropdown
         await this.page.getByRole('combobox', { name: '* Select Movie Genre' }).click();
 
-        const dropdown = this.page.locator('.rc-virtual-list-holder');
+        const dropdown = this.page.locator('.rc-virtual-list-holder').first();
         const option = this.page.locator('.ant-select-item-option', { hasText: genre });
 
         // Scroll until visible

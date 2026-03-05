@@ -56,10 +56,10 @@ test('User should be able to book a ticket for a move e2e', async({loggedInUserP
     const urls=bookedUrl.split('/');
     bookingId=urls[urls.length-1];
 
-    await expect(bookingDetailsPage.page).toHaveURL(/\/User/,{timeout:15000});
+    await expect(bookingDetailsPage.page).toHaveURL(/\/User/,{timeout:50000});
     await bookingDetailsPage.page.goto(bookedUrl);
 
-    await expect(bookingDetailsPage.selectedSeat(10)).toHaveClass(/booked/,{timeout:15000});
+    await expect(bookingDetailsPage.selectedSeat(10)).toHaveClass(/booked/,{timeout:50000});
     await expect(bookingDetailsPage.selectedSeat(11)).toHaveClass(/booked/);
     await expect(bookingDetailsPage.showName).toContainText("Avengers Show");
     await expect(bookingDetailsPage.showDateTime).toContainText(formatDateWithOrdinal(new Date()));

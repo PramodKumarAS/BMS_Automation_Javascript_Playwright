@@ -1,4 +1,4 @@
-import { test,expect } from "../../../../fixtures/auth.fixture";
+import { test,expect } from "../../../../../fixtures/auth.fixture";
 
 test('User should see required Register fields and login link on Register page',async ({registerPage})=>{
     await expect(registerPage.heading).toBeVisible();

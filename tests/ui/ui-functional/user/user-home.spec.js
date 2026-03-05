@@ -1,5 +1,5 @@
-import { test, expect } from '../../../fixtures/auth.fixture';
-import data from "../../../test-data/user.json";
+import { test,expect } from "../../../../fixtures/auth.fixture";
+import data from "../../../../test-data/user.json";
 
 test('User should see search movie box and user menu on the home page', async ({ loggedInUserPage }) => {
     await expect(loggedInUserPage.bannerHeader).toBeVisible();

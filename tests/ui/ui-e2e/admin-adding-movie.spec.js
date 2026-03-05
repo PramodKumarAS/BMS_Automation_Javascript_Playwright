@@ -8,7 +8,7 @@ test.afterAll(async ()=>{
 });
 
 test('Admin should be able to add a new movie e2e',async({loggedInAdminPage})=>{
-    await expect(loggedInAdminPage.movieTable,{timeout:15000}).toBeVisible();
+    await expect(loggedInAdminPage.movieTable).toBeVisible({timeout:15000});
   
     const beforeCount = await loggedInAdminPage.getRecordCount();
     const addMoiveModalPage = await loggedInAdminPage.openAddMovieModal();

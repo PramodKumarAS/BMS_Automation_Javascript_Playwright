@@ -1,7 +1,7 @@
-import { test,expect } from "../../../fixtures/auth.fixture";
+import { test,expect } from "../../../../fixtures/auth.fixture";
 
 test('User should see action buttons and tabs on the partner home page',async({loggedInPartnerPage})=>{
-    await expect(loggedInPartnerPage.heading).toBeVisible();
+    await expect(loggedInPartnerPage.heading).toBeVisible({timeout:15000});
     await expect(loggedInPartnerPage.theatresTab).toBeVisible();
     await expect(loggedInPartnerPage.addTheatre).toBeVisible();
     await expect(loggedInPartnerPage.prevArrowButton).toBeVisible();

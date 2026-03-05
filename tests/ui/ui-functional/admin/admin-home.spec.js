@@ -19,9 +19,9 @@ test('User should see required fields Edit movie modal' ,async ({loggedInAdminPa
     await expect(editMovieModal.movieName).toBeVisible();
     await expect(editMovieModal.description).toBeVisible();
     await expect(editMovieModal.movieDuration).toBeVisible();
-    await expect(editMovieModal.selectMovieLanguage).toBeVisible();
+    await expect(editMovieModal.slctMovieLanguage).toBeVisible();
     await expect(editMovieModal.releaseDate).toBeVisible();
-    await expect(editMovieModal.selectMovieGenre).toBeVisible();
+    await expect(editMovieModal.slctMovieGenre).toBeVisible();
     await expect(editMovieModal.posterURL).toBeVisible();
     await expect(editMovieModal.submitButton).toBeVisible();
     await expect(editMovieModal.cancelButton).toBeVisible();

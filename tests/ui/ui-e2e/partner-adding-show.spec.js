@@ -33,7 +33,7 @@ test('partner should be able to add a show e2e',async({loggedInPartnerPage})=>{
     const showRowData = await showsModalPage.getRowData(shows.show.showName);
 
     await expect(showRowData).toContainText(shows.show.showName);
-    await expect(showRowData).toContainText(new Date().toLocaleDateString('en-us'));
+    await expect(showRowData).toContainText(new Date().toISOString().split('T')[0]);
     await expect(showRowData).toContainText(shows.show.showTime);
     await expect(showRowData).toContainText(shows.show.movie);
     await expect(showRowData).toContainText(shows.show.ticketPrice);
