@@ -17,7 +17,7 @@ class AuthApiService{
             }
         });
 
-        return response.json();
+        return response;
     }
 }
 

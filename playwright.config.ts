@@ -8,7 +8,7 @@ export default defineConfig({
   reporter: 'allure-playwright',
 
   use: {
-    headless: true,
+    headless: false,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     ignoreHTTPSErrors: true,
@@ -31,10 +31,14 @@ export default defineConfig({
 
     // 🔹 API Project
     {
-      name: 'api',
+      name: 'ui-chromium',
       testDir: './tests/api',
       use: {
+        browserName: 'chromium',
         baseURL: process.env.API_BASE_URL,
+        launchOptions: {
+          args: ['--start-maximized'],
+        },
       },
     },
   ],
