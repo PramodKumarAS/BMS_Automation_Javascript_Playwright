@@ -10,9 +10,10 @@ The structure is intentionally simple but production-ready, suitable for both te
 
 ## Tech Stack
 
-* **Playwright** (UI Automation)
-* **JavaScript** (Test, Pages, Fixtures)
+* **Playwright** (UI & API Automation)
+* **JavaScript** (Tests, Pages, Fixtures, Services)
 * **TypeScript** (Playwright configuration)
+* **MongoDB** (Database testing & data setup)
 * **Allure** (Test Reporting)
 * **Node.js / npm**
 * **Jenkins / GitHub Actions** (CI-ready)
@@ -29,24 +30,44 @@ BMS_AUTOMATION
 │
 ├── pages/
 │   ├── login.page.js          # Login page object
+│   ├── register.page.js       # Registration page object
+│   ├── admin-home.page.js     # Admin home/dashboard page object
+│   ├── partner-home.page.js   # Partner home/dashboard page object
 │   ├── user-home.page.js      # User home/dashboard page object
-│   └── user-profile.page.js   # User profile page object
+│   ├── user-profile.page.js   # User profile page object
+│   ├── movie-modal.page.js    # Movie modal page object
+│   ├── show-booking.page.js   # Show booking page object
+│   ├── theatre-modal.page.js  # Theatre modal page object
+│   ├── stripe-checkout-frame.page.js # Stripe payment integration
+│   └── [other page objects]   # Additional page objects for various UI components
 │
 ├── services/
-│   └── mongo.service.js       # Database / backend interaction utilities
+│   ├── auth.service.js        # Authentication service
+│   ├── mongo.service.js       # MongoDB database interaction utilities
+│   └── show.service.js        # Show management service
 │
 ├── utils/
 │   └── time.util.js           # Stateless helper utilities (date/time, formatting)
 │
 ├── test-data/
-│   └── user.json              # Test data for user scenarios
+│   ├── user.json              # User test data
+│   ├── movie.json             # Movie test data
+│   └── show.json              # Show test data
 │
-├── tests/ui-functional/
-│   ├── admin/                 # Admin role test cases
-│   ├── partner/               # Partner role test cases
-│   ├── common/auth/           # Common authentication-related tests
-│   └── user/
-│       └── user-home.spec.js  # User home flow tests
+├── tests/
+│   ├── ui/
+│   │   ├── ui-functional/     # Functional test cases by role
+│   │   │   ├── admin/         # Admin role test cases
+│   │   │   ├── partner/       # Partner role test cases
+│   │   │   ├── common/        # Common test utilities and shared tests
+│   │   │   └── user/          # User role test cases
+│   │   │       └── user-home.spec.js  # User home flow tests
+│   │   └── ui-e2e/            # End-to-end test scenarios
+│   │       ├── admin-adding-movie.spec.js   # Admin movie creation flow
+│   │       ├── partner-adding-show.spec.js  # Partner show addition flow
+│   │       └── user-booking-show.spec.js    # User show booking flow
+│   └── api/
+│       └── user.api.spec.js   # API test cases for user endpoints
 │
 ├── playwright.config.ts       # Playwright configuration
 ├── Jenkinsfile                # CI pipeline definition
@@ -81,15 +102,24 @@ BMS_AUTOMATION
 * `utils/` contains pure, stateless helper functions
 * No Playwright or test logic allowed here
 
-### 5. Role-Based Test Organization
+### 5. Test Organization Strategy
 
-Tests are grouped by business roles:
+**Functional Tests** - Organized by business roles:
+* `admin` - Admin-specific workflows
+* `partner` - Partner-specific workflows  
+* `user` - User-specific workflows
+* `common` - Shared/common test utilities
 
-* `admin`
-* `partner`
-* `user`
+Role-based organization makes ownership, execution, and scaling easier.
 
-This makes ownership, execution, and scaling easier.
+**E2E Tests** - Complete end-to-end user journeys
+* `admin-adding-movie.spec.js` - Admin movie creation flow
+* `partner-adding-show.spec.js` - Partner show addition flow
+* `user-booking-show.spec.js` - User show booking flow
+
+**API Tests** - Backend API testing
+* Located in `tests/api/`
+* Covers API endpoints and business logic validation
 
 ---
 
@@ -119,10 +149,42 @@ npm install
 npx playwright test
 ```
 
+### Run UI tests only
+
+```bash
+npx playwright test tests/ui
+```
+
+### Run functional tests only
+
+```bash
+npx playwright test tests/ui/ui-functional
+```
+
+### Run E2E tests only
+
+```bash
+npx playwright test tests/ui/ui-e2e
+```
+
+### Run API tests only
+
+```bash
+npx playwright test tests/api
+```
+
+### Run tests for a specific role
+
+```bash
+npx playwright test tests/ui/ui-functional/admin
+npx playwright test tests/ui/ui-functional/partner
+npx playwright test tests/ui/ui-functional/user
+```
+
 ### Run a specific test
 
 ```bash
-npx playwright test tests/ui-functional/user/user-home.spec.js
+npx playwright test tests/ui/ui-functional/user/user-home.spec.js
 ```
 
 ### Run tests in headed mode
@@ -188,13 +250,16 @@ PASSWORD=
 
 ## Future Enhancements (Optional)
 
-* TypeScript migration for tests and pages
-* API + UI combined test flows
-* Role-based storageState usage
-* Test tagging and project-based execution
+* TypeScript migration for tests, pages, and services
+* Comprehensive API test coverage expansion
+* Advanced test data factory patterns
+* Parallel test execution optimization
+* Custom Allure reporters for detailed insights
+* Performance and load testing integration
+* Visual regression testing
 
 ---
 
 ## Summary
 
-This framework is designed to be **clean, scalable, and production-ready** while remaining easy to understand. It follows industry conventions used in mature Playwright automation projects and is suitable for real-world applications as well as technical interviews.
+This framework is designed to be **clean, scalable, and production-ready** while remaining easy to understand. It combines **UI automation, E2E testing, and API testing** with MongoDB integration for comprehensive test automation. The architecture follows industry conventions used in mature Playwright automation projects and is suitable for real-world applications as well as technical interviews. The role-based test organization and service layer architecture make it easy to scale tests across multiple user personas and system interactions.
