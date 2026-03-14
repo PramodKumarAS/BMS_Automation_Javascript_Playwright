@@ -52,6 +52,12 @@ async function deleteOne(params,value) {
   await collection.deleteOne({[params]:value});
 }
 
+async function deleteMany(params,value) {
+  if (!collection) throw new Error("Mongo not initialized");
+
+  await collection.deleteMany({[params]:value});
+}
+
 async function updateMongoRecordToEmptyArray(id, arrayFieldName) {
   if (!collection) throw new Error("Mongo not initialized");
 
@@ -78,5 +84,6 @@ export {
   deleteMongoRecords,
   updateMongoRecordToEmptyArray ,
   updateOne,
-  deleteOne
+  deleteOne,
+  deleteMany
 };

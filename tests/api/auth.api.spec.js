@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { AuthApiService } from '../../services/auth.service';
+import { AuthApiService } from '../../services/authAPI.service';
 import Ajv from 'ajv';
-import { findMongoRecord, findMongoRecordById, MongoConnect } from '../../services/mongo.service';
+import { findMongoRecord, findMongoRecordById, MongoConnect } from '../../services/mongoDB.service';
 
 test('POST - Login API Schema validation',async({request})=>{
     const authAPI = new AuthApiService(request);
