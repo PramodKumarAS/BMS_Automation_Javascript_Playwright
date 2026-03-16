@@ -1,11 +1,12 @@
 import {test,expect} from '@playwright/test';
 import {TheatreApiService} from '../../services/theatreAPI.service';
 import { AuthApiService } from '../../services/authAPI.service';
-import { deleteMany, MongoConnect } from '../../services/mongoDB.service';
+import { deleteMany, findMongoRecord, findMongoRecordById, findMongoRecords, findMongoRecordsById, MongoConnect } from '../../services/mongoDB.service';
 import theatreData from '../../test-data/theatre.json';
 import { theatreSchema } from '../../schemas/theatreSchema';
 import Ajv from 'ajv';
 import addFormats from "ajv-formats";
+import { ObjectId } from 'mongodb';
 
 let theatreName;
 
@@ -69,4 +70,44 @@ test('POST - Add Theatre API Schema Validation',async({request})=>{
     const validate = ajv.compile(theatreSchema);
     const valid = validate(theareResponseData);
     expect(valid).toBe(true);
+});
+
+test('GET - Get all Theatres API return 200 sucess',async({request})=>{
+    const authApiService = new AuthApiService(request);
+    const authResponse =await authApiService.login(process.env.PARTNER_EMAIL,process.env.PASSWORD);
+    await expect(authResponse.status()).toBe(200);
+    const authResonseData = await authResponse.json();
+
+    const theatreAPIService = new TheatreApiService(request);
+    const theatreResponse = await theatreAPIService.getAllTheatres(authResonseData.token);
+    await expect(theatreResponse.status()).toBe(200);
+
+    const theareResponseData = await theatreResponse.json();
+    expect(theareResponseData.success).toBe(true);
+    expect(theareResponseData.message).toBe("Theatre fetched!");
+
+    await MongoConnect("test","theatres");
+    const mdb_MongoRecords = await findMongoRecords();
+    expect(theareResponseData.allTheatres.length).toBe(mdb_MongoRecords.length);
+});
+
+test('GET - Get all Theatres by OwnerId API returns 200 sucess',async({request})=>{
+    const authApiService = new AuthApiService(request);
+    const authResponse =await authApiService.login(process.env.PARTNER_EMAIL,process.env.PASSWORD);
+    await expect(authResponse.status()).toBe(200);
+    const authResonseData = await authResponse.json();
+
+    const currentUserResponse = await authApiService.getCurrentUser(authResonseData.token);
+    await expect(currentUserResponse.status()).toBe(200);
+    const currentUserResponseData = await currentUserResponse.json();
+    
+    const theatreAPIService = new TheatreApiService(request);
+    const theatreResponse = await theatreAPIService.getTheatresByOwnerId(authResonseData.token,currentUserResponseData.user._id);
+    await expect(theatreResponse.status()).toBe(200);
+
+    const theatreResponseData = await theatreResponse.json();
+
+    await MongoConnect("test","theatres");
+    const mdb_MongoRecords = await findMongoRecordsById("owner",new ObjectId(currentUserResponseData.user._id));
+    await expect(theatreResponseData.allTheatres.length).toBe(mdb_MongoRecords.length);
 });

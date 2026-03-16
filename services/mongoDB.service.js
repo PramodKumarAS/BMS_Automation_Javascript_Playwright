@@ -22,6 +22,18 @@ async function findMongoRecord(email) {
   return await collection.findOne({ email });
 }
 
+async function findMongoRecords() {
+  if (!collection) throw new Error("Mongo not initialized");
+
+  return await collection.find({}).toArray();;
+}
+
+async function findMongoRecordsById(params,value) {
+  if (!collection) throw new Error("Mongo not initialized");
+
+  return await collection.find({[params]:value}).toArray();;
+}
+
 async function findMongoRecordById(id) {
   if (!collection) throw new Error("Mongo not initialized");
 
@@ -78,9 +90,11 @@ async function updateOne(id,fieldName,value) {
 export { 
   MongoConnect, 
   findMongoRecord,
+  findMongoRecords,
   findMongoRecordOne,
   findMongoRecordById,
   findMongoRecordByShowId,
+  findMongoRecordsById,
   deleteMongoRecords,
   updateMongoRecordToEmptyArray ,
   updateOne,

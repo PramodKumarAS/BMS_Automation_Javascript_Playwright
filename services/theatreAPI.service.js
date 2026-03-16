@@ -39,12 +39,9 @@ class TheatreApiService{
     }
 
     async getTheatresByOwnerId(token,ownerID){
-         const endPoint = `${process.env.API_BASE_URL}/api/theatre//get-theatres-ByOwner/:ownerID`;
+         const endPoint = `${process.env.API_BASE_URL}/api/theatre/get-theatres-ByOwner/${ownerID}`;
 
          const response = await this.request.get(endPoint,{
-            params:{
-                ownerID:ownerID
-            },
             headers:{
                 'Content-Type':'application/json',
                 Authorization:`Bearer ${token}`            
