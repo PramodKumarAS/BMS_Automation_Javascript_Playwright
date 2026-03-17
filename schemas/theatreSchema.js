@@ -33,3 +33,94 @@ export const theatreSchema = {
   },
   required: ["success", "message", "theatre"]
 };
+
+export const getTheatresSchema = {
+  type: "object",
+  properties: {
+    success: { type: "boolean" },
+    message: { type: "string" },
+    allTheatres: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          _id: { type: "string" },
+          name: { type: "string" },
+          address: { type: "string" },
+          phone: { type: "number" },
+          email: { type: "string" },
+          owner: {
+            type: "object",
+            properties: {
+              _id: { type: "string" },
+              name: { type: "string" },
+              email: { type: "string" },
+              password: { type: "string" },
+              role: { type: "string" },
+              __v: { type: "number" },
+              otp: { type: "string" },
+              otpExpiry: { type: "string", format: "date-time" }
+            },
+            required: ["_id", "name", "email", "password", "role"]
+          },
+          isActive: { type: "boolean" },
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
+          __v: { type: "number" }
+        },
+        required: [
+          "_id",
+          "name",
+          "address",
+          "phone",
+          "email",
+          "owner",
+          "isActive",
+          "createdAt",
+          "updatedAt",
+          "__v"
+        ]
+      }
+    }
+  },
+  required: ["success", "message", "allTheatres"]
+};
+
+export const theatresByOwnerSchema = {
+  type: "object",
+  properties: {
+    success: { type: "boolean" },
+    message: { type: "string" },
+    allTheatres: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          _id: { type: "string" },
+          name: { type: "string" },
+          address: { type: "string" },
+          phone: { type: "number" },
+          email: { type: "string" },
+          owner: { type: "string" },
+          isActive: { type: "boolean" },
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
+          __v: { type: "number" }
+        },
+        required: [
+          "_id",
+          "name",
+          "address",
+          "phone",
+          "email",
+          "owner",
+          "isActive",
+          "createdAt",
+          "updatedAt",
+          "__v"
+        ]
+      }
+    }
+  },
+  required: ["success", "message", "allTheatres"]
+};

@@ -1,6 +1,15 @@
 {
-  "address": "Bangalore, Whitefield",
-  "email": "pramodkumaras143@gmail.com",
-  "name": "PVP Inox",
-  "phone": 8709919992
+  "newTheatreData":{
+    "address": "Bangalore, Whitefield",
+    "email": "pramodkumaras143@gmail.com",
+    "name": "PVP Inox",
+    "phone": 8709919992
+  },
+
+  "updatedTheatreData":{
+    "address": "Updated Bangalore, Whitefield",
+    "email": "pramodkumaras143@gmail.com",
+    "name": "Updated PVP Inox",
+    "phone": 8709912292 
+  }
 }

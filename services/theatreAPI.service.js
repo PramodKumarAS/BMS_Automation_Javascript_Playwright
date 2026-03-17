@@ -51,7 +51,7 @@ class TheatreApiService{
          return response;
     }
 
-    async updateTheatre(token,id){
+    async updateTheatre(token,id,theatreData,ownerID){
          const endPoint = `${process.env.API_BASE_URL}/api/theatre/update-theatre`;
          
          const response = await this.request.post(endPoint,{
@@ -61,10 +61,8 @@ class TheatreApiService{
             },
             data:{
                 _id:id,
-                address:"Bangalore, Whitefield",
-                email:"pramodkumaras143@gmail.com",
-                name:"PVP Inox",
-                phone:"8709919992"
+                 ...theatreData,
+                owner:ownerID,
             }        
          });
 
