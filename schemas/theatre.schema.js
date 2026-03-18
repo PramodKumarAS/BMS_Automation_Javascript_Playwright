@@ -124,3 +124,79 @@ export const theatresByOwnerSchema = {
   },
   required: ["success", "message", "allTheatres"]
 };
+
+export const updateTheatreSchema = {
+  type: "object",
+  required: ["success", "message", "updatedTheatre"],
+  properties: {
+    success: { type: "boolean" },
+    message: { type: "string" },
+    updatedTheatre: {
+      type: "object",
+      required: [
+        "_id",
+        "name",
+        "address",
+        "phone",
+        "email",
+        "owner",
+        "isActive",
+        "createdAt",
+        "updatedAt",
+        "__v"
+      ],
+      properties: {
+        _id: { type: "string" },
+        name: { type: "string" },
+        address: { type: "string" },
+        phone: { type: "number" },
+        email: { type: "string", format: "email" },
+        owner: { type: "string" },
+        isActive: { type: "boolean" },
+        createdAt: { type: "string", format: "date-time" },
+        updatedAt: { type: "string", format: "date-time" },
+        __v: { type: "number" }
+      },
+      additionalProperties: false
+    }
+  },
+  additionalProperties: false
+};
+
+export const deleteTheatreSchema = {
+  type: "object",
+  required: ["success", "message", "deletedTheatre"],
+  properties: {
+    success: { type: "boolean" },
+    message: { type: "string" },
+    deletedTheatre: {
+      type: "object",
+      required: [
+        "_id",
+        "name",
+        "address",
+        "phone",
+        "email",
+        "owner",
+        "isActive",
+        "createdAt",
+        "updatedAt",
+        "__v"
+      ],
+      properties: {
+        _id: { type: "string" },
+        name: { type: "string" },
+        address: { type: "string" },
+        phone: { type: "number" },
+        email: { type: "string", format: "email" },
+        owner: { type: "string" },
+        isActive: { type: "boolean" },
+        createdAt: { type: "string", format: "date-time" },
+        updatedAt: { type: "string", format: "date-time" },
+        __v: { type: "number" }
+      },
+      additionalProperties: false
+    }
+  },
+  additionalProperties: false
+};

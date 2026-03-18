@@ -1,33 +1,18 @@
 import { test, expect } from '@playwright/test';
 import { AuthApiService } from '../../services/authAPI.service';
-import Ajv from 'ajv';
-import { findMongoRecord, findMongoRecordById, MongoConnect } from '../../services/mongoDB.service';
+import { findMongoRecord, MongoConnect } from '../../services/mongoDB.service';
+import { forgetPasswordSchema, getCurrentUserSchema, loginSchema, registerSchema, resetPasswordSchema } from '../../schemas/auth.schema';
+import validateSchema from '../../utils/schemaValidator.util';
 
 test('POST - Login API Schema validation',async({request})=>{
     const authAPI = new AuthApiService(request);
 
-    const apiResponse = await authAPI.login(process.env.USER_EMAIL,process.env.PASSWORD);
-    await expect(apiResponse.status()).toBe(200);
-
-    const data = await apiResponse.json();
+    const loginResponse = await authAPI.login(process.env.USER_EMAIL,process.env.PASSWORD);
+    await expect(loginResponse.status()).toBe(200);    
+    const loginResponseData = await loginResponse.json();
     
-    const schema = {
-    type: "object",
-    required: ["success", "token", "message", "role"],
-    properties: {
-        success: { type: "boolean" },
-        token: { type: "string" },
-        message: { type: "string" },
-        role: { type: "string", enum: ["User"] }
-    },
-    additionalProperties: false
-    };
-
-    const ajv = new Ajv();
-    const validate = ajv.compile(schema);
-    const valid = validate(data);   
-
-    expect(valid).toBe(true);    
+    const valid = validateSchema(loginSchema,loginResponseData);
+    expect(valid).toBe(true);
 });
 
 test('POST - Login API should return 200 Success for valid credentials',async({request})=>{
@@ -54,23 +39,11 @@ test('POST - Login API should return 404 Not Found for Invalid credentials',asyn
 test('POST - Register API Schema Validation',async({request})=>{
     const apiAuth = new AuthApiService(request);
 
-    const apiResponse = await apiAuth.register('pkUser2@gmail.com');
-    expect(apiResponse.status()).toBe(200);
-    const data  = await apiResponse.json();
+    const registerResponse = await apiAuth.register('pkUser2@gmail.com');
+    expect(registerResponse.status()).toBe(200);
+    const registerResponseData  = await registerResponse.json();
 
-    const schema = {
-        type:"object",
-        required:["success", "message"],
-        properties: {
-        success: { type: "boolean" },
-        message: { type: "string" }
-        },
-        additionalProperties: false
-    };
-
-    const ajv = new Ajv();
-    const validate = ajv.compile(schema);
-    const valid = validate(data);
+    const valid = validateSchema(registerSchema,registerResponseData);
     expect(valid).toBe(true);
 });
 
@@ -95,25 +68,12 @@ test('POST - Register API should return 400 Bad Request for Invalid Email Domain
 
 test('POST - Foget Password API Schema Validation',async({request})=>{
     const apiAuth = new AuthApiService(request);
-    const apiResponse = await apiAuth.forgetPassword(process.env.USER_EMAIL);
-    await expect(apiResponse.status()).toBe(200);
+    const forgetPasswordResponse = await apiAuth.forgetPassword(process.env.USER_EMAIL);
+    await expect(forgetPasswordResponse.status()).toBe(200);
 
-    const data = await apiResponse.json();
+    const forgetPasswordResponseData = await forgetPasswordResponse.json();
 
-    const schema = {
-        type:"object",
-        required:["status","message"],
-        properties:{
-            status:{type:"string"},
-            message:{type:"string"}
-        },
-        additionalProperties:false
-    };
-
-    const ajv = new Ajv();
-    const validate = ajv.compile(schema);
-    const valid = validate(data);
-
+    const valid = validateSchema(forgetPasswordSchema,forgetPasswordResponseData);
     expect(valid).toBe(true);
 });
 
@@ -146,25 +106,12 @@ test('POST - Reset Password API schema validation',async({request})=>{
     await MongoConnect("test","users");
     const mdbResposne = await findMongoRecord(process.env.USER_EMAIL);
    
-    const apiResponse = await apiAuth.resetPassword(mdbResposne.otp,"14036");
-    await expect(apiResponse.status()).toBe(200);
+    const resetPasswordResponse = await apiAuth.resetPassword(mdbResposne.otp,"14036");
+    await expect(resetPasswordResponse.status()).toBe(200);
 
-    const data = await apiResponse.json();
+    const resetPasswordResponseData = await resetPasswordResponse.json();
 
-    const schema={
-        type:"object",
-        required:["status","message"],
-        properties:{
-            status:{type:"string"},
-            message:{type:"string"}
-        },
-        additionalProperties:false
-    };
-
-    const ajv = new Ajv();
-    const validate = ajv.compile(schema);
-    const valid = validate(data);
-
+    const valid = validateSchema(resetPasswordSchema,resetPasswordResponseData);
     expect(valid).toBe(true);
 });
 
@@ -216,36 +163,13 @@ test('GET - Get Current User API Schema Validation',async({request})=>{
     await expect(loginAPIResponse.status()).toBe(200);
 
     const loginData = await loginAPIResponse.json();
-    const apiResponse = await apiAuth.getCurrentUser(loginData.token);
-    await expect(apiResponse.status()).toBe(200);
+    const getCurrentUserResponse = await apiAuth.getCurrentUser(loginData.token);
+    await expect(getCurrentUserResponse.status()).toBe(200);
 
-    const data = await apiResponse.json();
+    const getCurrentUserResponseData = await getCurrentUserResponse.json();
 
-    const schema = {
-        type: "object",
-        properties: {
-            success: { type: "boolean" },
-            user: {
-            type: "object",
-            properties: {
-                _id: { type: "string" },
-                name: { type: "string" },
-                email: { type: "string" },
-                role: { type: "string" },
-                __v: { type: "number" }
-            },
-            required: ["_id", "name", "email", "role"]
-            }
-        },
-        required: ["success", "user"]
-    };
-
-    const ajv = new Ajv();
-    const validate= ajv.compile(schema);
-    const valid = validate(data);
-
+    const valid = validateSchema(getCurrentUserSchema,getCurrentUserResponseData);
     expect(valid).toBe(true);
-    
 });
 
 test('GET - Get current User API should return 401 Unauthorized for invalid token',async({request})=>{

@@ -72,7 +72,7 @@ class TheatreApiService{
     async deleteTheatre(token,id){
           const endPoint = `${process.env.API_BASE_URL}/api/theatre/delete-theatre`;
 
-         const response = await this.request.delete(endPoint,{
+         const response = await this.request.post(endPoint,{
                headers:{
                 'Content-Type':'application/json',
                 Authorization:`Bearer ${token}`            

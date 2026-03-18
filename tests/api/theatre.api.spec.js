@@ -1,18 +1,37 @@
 import {test,expect} from '@playwright/test';
 import {TheatreApiService} from '../../services/theatreAPI.service';
 import { AuthApiService } from '../../services/authAPI.service';
-import { deleteMany, findMongoRecord, findMongoRecordById, findMongoRecords, findMongoRecordsById, MongoConnect } from '../../services/mongoDB.service';
+import { deleteMany,findMongoRecords, findMongoRecordsById, MongoConnect } from '../../services/mongoDB.service';
 import {newTheatreData,updatedTheatreData} from '../../test-data/theatre.json';
-import { theatreSchema ,getTheatresSchema,theatresByOwnerSchema} from '../../schemas/theatreSchema';
-import Ajv from 'ajv';
-import addFormats from "ajv-formats";
 import { ObjectId } from 'mongodb';
+import { theatreSchema ,getTheatresSchema,theatresByOwnerSchema, updateTheatreSchema, deleteTheatreSchema} from '../../schemas/theatre.Schema';
+import validateSchema from '../../utils/schemaValidator.util';
 
 let theatreName;
 
 test.afterAll(async ()=>{
     await MongoConnect("test","theatres");
     await deleteMany("name",theatreName);
+});
+
+test('POST - Add Theatre API Schema Validation',async({request})=>{
+    const authAPI = new AuthApiService(request);
+    const theatreAPI = new TheatreApiService(request);
+    const authResponse =await authAPI.login(process.env.PARTNER_EMAIL,process.env.PASSWORD);
+    await expect(authResponse.status()).toBe(200);
+    const authResonseData = await authResponse.json();
+
+    const currentUserResponse = await authAPI.getCurrentUser(authResonseData.token);
+    await expect(currentUserResponse.status()).toBe(200);
+    const currentUserResponseData = await currentUserResponse.json();
+
+    const theatreResponse = await theatreAPI.addTheatre(authResonseData.token,newTheatreData,currentUserResponseData.user._id);
+    await expect(theatreResponse.status()).toBe(200);
+    const theatreResponseData = await theatreResponse.json(); 
+
+    theatreName =theatreResponseData.theatre.name;
+    const valid = validateSchema(theatreSchema,theatreResponseData);
+    expect(valid).toBe(true);
 });
 
 test('POST - Add Theatre API return 200 Success',async({request})=>{
@@ -46,35 +65,24 @@ test('POST - Add Theatre API return 200 Success',async({request})=>{
     expect(theatreResponseData.theatre.updatedAt).toBeTruthy();
 });
 
-test('POST - Add Theatre API Schema Validation',async({request})=>{
-    const authAPI = new AuthApiService(request);
-    const theatreAPI = new TheatreApiService(request);
-
-    const authResponse =await authAPI.login(process.env.PARTNER_EMAIL,process.env.PASSWORD);
+test('GET - Get all Theatres API Schema Validation',async({request})=>{
+    const authApiService = new AuthApiService(request);
+    const authResponse =await authApiService.login(process.env.ADMIN_EMAIL,process.env.PASSWORD);
     await expect(authResponse.status()).toBe(200);
     const authResonseData = await authResponse.json();
 
-    const currentUserResponse = await authAPI.getCurrentUser(authResonseData.token);
-    await expect(currentUserResponse.status()).toBe(200);
-    const currentUserResponseData = await currentUserResponse.json();
+    const theatreAPIService = new TheatreApiService(request);
+    const theatreResponse = await theatreAPIService.getAllTheatres(authResonseData.token);
+    await expect(theatreResponse.status()).toBe(200);
 
-    const theatreResponse = await theatreAPI.addTheatre(authResonseData.token,theatreData,currentUserResponseData.user._id);
-    await expect(theareResponse.status()).toBe(200);
-    const theareResponseData = await theareResponse.json(); 
-
-    theatreName =theareResponseData.theatre.name;
-
-    const ajv = new Ajv();
-    addFormats(ajv);   // enables date-time, email, etc.
-
-    const validate = ajv.compile(theatreSchema);
-    const valid = validate(theareResponseData);
+    const theatreResponseData = await theatreResponse.json();
+    const valid = validateSchema(getTheatresSchema,theatreResponseData);
     expect(valid).toBe(true);
 });
 
 test('GET - Get all Theatres API return 200 Success',async({request})=>{
     const authApiService = new AuthApiService(request);
-    const authResponse =await authApiService.login(process.env.PARTNER_ADMIN,process.env.PASSWORD);
+    const authResponse =await authApiService.login(process.env.ADMIN_EMAIL,process.env.PASSWORD);
     await expect(authResponse.status()).toBe(200);
     const authResonseData = await authResponse.json();
 
@@ -91,25 +99,24 @@ test('GET - Get all Theatres API return 200 Success',async({request})=>{
     expect(theareResponseData.allTheatres.length).toBe(mdb_MongoRecords.length);
 });
 
-test('GET - Get all Theatres API Schema Validation',async({request})=>{
+test('GET - Get all Theatres by OwnerId API Schema Validation',async({request})=>{
     const authApiService = new AuthApiService(request);
-    const authResponse =await authApiService.login(process.env.PARTNER_ADMIN,process.env.PASSWORD);
+    const authResponse =await authApiService.login(process.env.PARTNER_EMAIL,process.env.PASSWORD);
     await expect(authResponse.status()).toBe(200);
     const authResonseData = await authResponse.json();
 
+    const currentUserResponse = await authApiService.getCurrentUser(authResonseData.token);
+    await expect(currentUserResponse.status()).toBe(200);
+    const currentUserResponseData = await currentUserResponse.json();
+    
     const theatreAPIService = new TheatreApiService(request);
-    const theatreResponse = await theatreAPIService.getAllTheatres(authResonseData.token);
+    const theatreResponse = await theatreAPIService.getTheatresByOwnerId(authResonseData.token,currentUserResponseData.user._id);
     await expect(theatreResponse.status()).toBe(200);
 
-    const theareResponseData = await theatreResponse.json();
+    const theatreResponseData = await theatreResponse.json();
 
-    const ajv = new Ajv();
-    addFormats(ajv);   // enables date-time, email, etc.
-    const validate = ajv.compile(getTheatresSchema);
-
-    const valid = validate(theareResponseData);
+    const valid = validateSchema(theatresByOwnerSchema,theatreResponseData);
     expect(valid).toBe(true);
-
 });
 
 test('GET - Get all Theatres by OwnerId API returns 200 Success',async({request})=>{
@@ -133,26 +140,30 @@ test('GET - Get all Theatres by OwnerId API returns 200 Success',async({request}
     await expect(theatreResponseData.allTheatres.length).toBe(mdb_MongoRecords.length);
 });
 
-test('GET - Get all Theatres by OwnerId API Schema Validation',async({request})=>{
-    const authApiService = new AuthApiService(request);
-    const authResponse =await authApiService.login(process.env.PARTNER_EMAIL,process.env.PASSWORD);
+test('POST - Update Theatre API Schema Validation',async({request})=>{
+    const authAPI = new AuthApiService(request);
+    const theatreAPI = new TheatreApiService(request);
+
+    const authResponse =await authAPI.login(process.env.PARTNER_EMAIL,process.env.PASSWORD);
     await expect(authResponse.status()).toBe(200);
     const authResonseData = await authResponse.json();
 
-    const currentUserResponse = await authApiService.getCurrentUser(authResonseData.token);
+    const currentUserResponse = await authAPI.getCurrentUser(authResonseData.token);
     await expect(currentUserResponse.status()).toBe(200);
     const currentUserResponseData = await currentUserResponse.json();
-    
-    const theatreAPIService = new TheatreApiService(request);
-    const theatreResponse = await theatreAPIService.getTheatresByOwnerId(authResonseData.token,currentUserResponseData.user._id);
+
+    const theatreResponse = await theatreAPI.addTheatre(authResonseData.token,newTheatreData,currentUserResponseData.user._id);
     await expect(theatreResponse.status()).toBe(200);
+    const theatreResponseData = await theatreResponse.json(); 
+    const theatreId = theatreResponseData.theatre._id;
+    
+    const updatetheatreResponse = await theatreAPI.updateTheatre(authResonseData.token,theatreId,updatedTheatreData,currentUserResponseData.user._id);
+    await expect(updatetheatreResponse.status()).toBe(200);
+    const updatetheatreResponseData = await updatetheatreResponse.json(); 
 
-    const theatreResponseData = await theatreResponse.json();
+    theatreName =updatetheatreResponseData.updatedTheatre.name;
 
-    const ajv = new Ajv();
-    const validate = ajv.compile(theatresByOwnerSchema);
-    const valid = validate(theatreResponseData);
-
+    const valid = validateSchema(updateTheatreSchema,updatetheatreResponseData);
     expect(valid).toBe(true);
 });
 
@@ -190,4 +201,62 @@ test('POST - Update Theatre API return 200 Success',async({request})=>{
     expect(updatetheatreResponseData.updatedTheatre._id).not.toBeNull();
     expect(updatetheatreResponseData.updatedTheatre.updatedAt).toBeTruthy();
     expect(updatetheatreResponseData.updatedTheatre.updatedAt).toBeTruthy();
+});
+
+test('POST - Delete Theatre API return 200 Success',async({request})=>{
+    const authAPI = new AuthApiService(request);
+    const theatreAPI = new TheatreApiService(request);
+
+    const authResponse =await authAPI.login(process.env.PARTNER_EMAIL,process.env.PASSWORD);
+    await expect(authResponse.status()).toBe(200);
+    const authResonseData = await authResponse.json();
+
+    const currentUserResponse = await authAPI.getCurrentUser(authResonseData.token);
+    await expect(currentUserResponse.status()).toBe(200);
+    const currentUserResponseData = await currentUserResponse.json();
+
+    const theatreResponse = await theatreAPI.addTheatre(authResonseData.token,newTheatreData,currentUserResponseData.user._id);
+    await expect(theatreResponse.status()).toBe(200);
+    const theatreResponseData = await theatreResponse.json(); 
+    const theatreId = theatreResponseData.theatre._id;
+    
+    const updatetheatreResponse = await theatreAPI.updateTheatre(authResonseData.token,theatreId,updatedTheatreData,currentUserResponseData.user._id);
+    await expect(updatetheatreResponse.status()).toBe(200);
+    const updatetheatreResponseData = await updatetheatreResponse.json(); 
+
+    theatreName =updatetheatreResponseData.updatedTheatre.name;
+
+    const deleteTheatreResponse = await theatreAPI.deleteTheatre(authResonseData.token,theatreId);
+    await expect(deleteTheatreResponse.status()).toBe(200);
+});
+
+test('POST - Delete Theatre API Schema Validation',async({request})=>{
+    const authAPI = new AuthApiService(request);
+    const theatreAPI = new TheatreApiService(request);
+
+    const authResponse =await authAPI.login(process.env.PARTNER_EMAIL,process.env.PASSWORD);
+    await expect(authResponse.status()).toBe(200);
+    const authResonseData = await authResponse.json();
+
+    const currentUserResponse = await authAPI.getCurrentUser(authResonseData.token);
+    await expect(currentUserResponse.status()).toBe(200);
+    const currentUserResponseData = await currentUserResponse.json();
+
+    const theatreResponse = await theatreAPI.addTheatre(authResonseData.token,newTheatreData,currentUserResponseData.user._id);
+    await expect(theatreResponse.status()).toBe(200);
+    const theatreResponseData = await theatreResponse.json(); 
+    const theatreId = theatreResponseData.theatre._id;
+    
+    const updatetheatreResponse = await theatreAPI.updateTheatre(authResonseData.token,theatreId,updatedTheatreData,currentUserResponseData.user._id);
+    await expect(updatetheatreResponse.status()).toBe(200);
+    const updatetheatreResponseData = await updatetheatreResponse.json(); 
+
+    theatreName =updatetheatreResponseData.updatedTheatre.name;
+
+    const deleteTheatreResponse = await theatreAPI.deleteTheatre(authResonseData.token,theatreId);
+    await expect(deleteTheatreResponse.status()).toBe(200);
+    const deletetheatreResponseData = await deleteTheatreResponse.json(); 
+
+    const valid = validateSchema(deleteTheatreSchema,deletetheatreResponseData);
+    expect(valid).toBe(true);
 });
