@@ -1,5 +1,5 @@
 import {test,expect} from '../../../fixtures/auth.fixture'
-import { deleteMongoRecords, MongoConnect, updateMongoRecordToEmptyArray, updateOne } from '../../../services/mongo.service';
+import { deleteMongoRecords, MongoConnect, updateMongoRecordToEmptyArray, updateOne } from '../../../services/mongoDB.service';
 import movieData from '../../../test-data/movie.json';
 import userData from '../../../test-data/user.json';
 import formatDateWithOrdinal from '../../../utils/time.util';

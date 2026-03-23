@@ -6,11 +6,6 @@ class TheatreApiService{
     async addTheatre(token,theatreData,ownerID){
         const endPoint = `${process.env.API_BASE_URL}/api/theatre/add-theatre`;
 
-        try {
-            
-        } catch (error) {
-            
-        }
         const response = await this.request.post(endPoint,{
             headers:{
                 'Content-Type':'application/json',
