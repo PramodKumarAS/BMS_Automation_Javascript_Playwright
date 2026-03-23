@@ -4,7 +4,7 @@ import { AuthApiService } from '../../services/authAPI.service';
 import { deleteMany,findMongoRecords, findMongoRecordsById, MongoConnect } from '../../services/mongoDB.service';
 import {newTheatreData,updatedTheatreData} from '../../test-data/theatre.json';
 import { ObjectId } from 'mongodb';
-import { theatreSchema ,getTheatresSchema,theatresByOwnerSchema, updateTheatreSchema, deleteTheatreSchema} from '../../schemas/theatre.Schema';
+import { theatreSchema ,getTheatresSchema,theatresByOwnerSchema, updateTheatreSchema, deleteTheatreSchema} from '../../schemas/theatre.schema';
 import validateSchema from '../../utils/schemaValidator.util';
 
 let theatreName;

@@ -1,5 +1,5 @@
 import {test,expect} from '../../../fixtures/auth.fixture';
-import { deleteOne, MongoConnect } from '../../../services/mongo.service';
+import { deleteOne, MongoConnect } from '../../../services/mongoDB.service';
 import {newMovie} from '../../../test-data/movie.json';
 
 test.afterAll(async ()=>{
