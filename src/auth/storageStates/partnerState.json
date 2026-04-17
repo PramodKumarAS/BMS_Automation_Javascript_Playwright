@@ -1,0 +1,18 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "https://bookmyshow0101.netlify.app",
+      "localStorage": [
+        {
+          "name": "token",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2Y5Y2FmY2RmNWUyMTM4NjkyZGEzNTgiLCJyb2xlIjoiUGFydG5lciIsImlhdCI6MTc3NjQwNDU2OSwiZXhwIjoxNzc2NDA4MTY5fQ.faIpO2etE8xSTiCPvozpVh5qak3xDxU1Vk00V0Aaovw"
+        },
+        {
+          "name": "user",
+          "value": "{\"userId\":\"67f9cafcdf5e2138692da358\",\"role\":\"Partner\",\"iat\":1776404569,\"exp\":1776408169}"
+        }
+      ]
+    }
+  ]
+}

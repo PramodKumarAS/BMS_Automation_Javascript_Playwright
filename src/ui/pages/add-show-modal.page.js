@@ -27,7 +27,6 @@ class AddShowModalPage{
             await dropdown.evaluate(el => {
                 el.scrollTop += 200;   // adjust scroll step if needed
             });
-            await this.page.waitForTimeout(200); // small wait for virtual render
         }
 
         await option.click();

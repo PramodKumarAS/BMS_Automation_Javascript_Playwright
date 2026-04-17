@@ -39,8 +39,8 @@ export const test=base.extend({
     },
 
     movieDetailsPage:async({page},use)=>{
-        const moveDetailsPage = new MovieDetailsPage(page);
-        await use(moveDetailsPage);
+        const movieDetailsPage = new MovieDetailsPage(page);
+        await use(movieDetailsPage);
     },
 
     bookingDetailsPage:async({page},use)=>{
