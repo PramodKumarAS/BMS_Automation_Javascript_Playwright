@@ -8,7 +8,7 @@ let collection;
 
 async function MongoConnect(databaseName, collectionName) {
   if (!client) {
-    client = new MongoClient(process.env.Mongo_Url);
+    client = new MongoClient(process.env.MONGO_URL);
     await client.connect();
   }
 
