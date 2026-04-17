@@ -1,20 +1,20 @@
-import { test,expect } from "../../../../fixtures/auth.fixture";
+import { test,expect } from "../../../../src/fixtures/auth.fixture";
 
-test('User should see tabs and open Theatre tabs on admin home page',async({loggedInAdminPage})=>{
-    await expect(loggedInAdminPage.heading).toBeVisible();
-    await expect(loggedInAdminPage.moviesTab).toBeVisible();
-    await expect(loggedInAdminPage.theatresTab).toBeVisible();
-    await expect(loggedInAdminPage.addMovieButton).toBeVisible();
-    await expect(loggedInAdminPage.movieTable).toBeVisible();
-    await expect(loggedInAdminPage.editMovieButton).toBeVisible();
-    await expect(loggedInAdminPage.deleteMovieButton).toBeVisible();
+test('User should see tabs and open Theatre tabs on admin home page',{tag:["@smoke"]},async({loginAsAdmin})=>{
+    await expect(loginAsAdmin.heading).toBeVisible();
+    await expect(loginAsAdmin.moviesTab).toBeVisible();
+    await expect(loginAsAdmin.theatresTab).toBeVisible();
+    await expect(loginAsAdmin.addMovieButton).toBeVisible();
+    await expect(loginAsAdmin.movieTable).toBeVisible();
+    await expect(loginAsAdmin.editMovieButton).toBeVisible();
+    await expect(loginAsAdmin.deleteMovieButton).toBeVisible();
 
-    await loggedInAdminPage.openTheatresTab();
-    await expect(loggedInAdminPage.theatresTable).toBeVisible();
+    await loginAsAdmin.openTheatresTab();
+    await expect(loginAsAdmin.theatresTable).toBeVisible();
 });
 
-test('User should see required fields Edit movie modal' ,async ({loggedInAdminPage})=>{
-    const editMovieModal = await loggedInAdminPage.openEditMovieModal();
+test('User should see required fields Edit movie modal' ,async ({loginAsAdmin})=>{
+    const editMovieModal = await loginAsAdmin.openEditMovieModal();
 
     await expect(editMovieModal.movieName).toBeVisible();
     await expect(editMovieModal.description).toBeVisible();
@@ -28,8 +28,8 @@ test('User should see required fields Edit movie modal' ,async ({loggedInAdminPa
     await expect(editMovieModal.closeButton).toBeVisible();
 });
 
-test('User should see action buttons on Delete Movie dialog',async ({loggedInAdminPage})=>{
-    const deleteMovieModal = await loggedInAdminPage.openDeleteMovieDialog();
+test('User should see action buttons on Delete Movie dialog',async ({loginAsAdmin})=>{
+    const deleteMovieModal = await loginAsAdmin.openDeleteMovieDialog();
 
     await expect(deleteMovieModal.deleteMsg).toBeVisible();
     await expect(deleteMovieModal.deleteYesButton).toBeVisible();

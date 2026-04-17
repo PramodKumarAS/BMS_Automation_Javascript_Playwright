@@ -1,6 +1,6 @@
-import { test,expect } from "../../../../../fixtures/auth.fixture";
+import { test,expect } from "../../../../../src/fixtures/pages.fixture";
 
-test('User Should see required fields on forget password page', async ({ forgetPasswordPage }) => {
+test('User Should see required fields on forget password page',{tag:["@smoke"]}, async ({ forgetPasswordPage }) => {
     await expect(forgetPasswordPage.forgetPasswordHeading).toBeVisible();
     await expect(forgetPasswordPage.emailTextbox).toBeVisible();
     await expect(forgetPasswordPage.sendOtpButton).toBeVisible();

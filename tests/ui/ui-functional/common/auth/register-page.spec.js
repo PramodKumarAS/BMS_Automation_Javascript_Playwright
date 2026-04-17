@@ -1,6 +1,6 @@
-import { test,expect } from "../../../../../fixtures/auth.fixture";
+import { test,expect } from "../../../../../src/fixtures/pages.fixture";
 
-test('User should see required Register fields and login link on Register page',async ({registerPage})=>{
+test('User should see required Register fields and login link on Register page',{tag:["@smoke"]},async ({registerPage})=>{
     await expect(registerPage.heading).toBeVisible();
     await expect(registerPage.fullName).toBeVisible();
     await expect(registerPage.email).toBeVisible();

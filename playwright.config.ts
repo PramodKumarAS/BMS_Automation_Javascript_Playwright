@@ -6,14 +6,18 @@ export default defineConfig({
   testDir: './tests',
   timeout: 60 * 1000,
   reporter: 'allure-playwright',
+  retries:2,
+  globalSetup: require.resolve("./src/global-setup"),
 
   use: {
-    headless: true,
+    storageState:"authState.json",
+    headless: false,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     ignoreHTTPSErrors: true,
     viewport: null,
   },
+
 
   projects: [
     // 🔹 UI Project

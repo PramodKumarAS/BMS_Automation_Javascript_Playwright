@@ -1,21 +1,36 @@
-import {test,expect} from '../../../fixtures/auth.fixture'
-import { deleteMongoRecords, MongoConnect, updateMongoRecordToEmptyArray, updateOne } from '../../../services/mongoDB.service';
-import movieData from '../../../test-data/movie.json';
-import userData from '../../../test-data/user.json';
-import formatDateWithOrdinal from '../../../utils/time.util';
+import {test,expect} from '../../../src/fixtures/pages.fixture'
+import { deleteMongoRecords, deleteOne, findMongoRecordsById, MongoConnect, updateMongoRecordToEmptyArray, updateOne } from '../../../src/utils/mongoDBHelper';
+import movieData from '../../../src/test-data/movie.json';
+import {showData} from '../../../src/test-data/show.json';
+import userData from '../../../src/test-data/user.json';
+import formatDateWithOrdinal from '../../../src/utils/time.util';
+import ShowApiService from '../../../src/api/client/showService';
 
-let bookingId;
+let movieId ;
+let theatreId;
+
+test.beforeAll(async()=>{
+    await MongoConnect('test','movies');
+    const mdb_movie = await findMongoRecordsById("movieName",movieData.movies.name);
+    movieId=mdb_movie[0]._id;
+    movieId=movieId.toString();
+
+    await MongoConnect('test','theatres');
+    const mdb_theatre = await findMongoRecordsById("name","PVR");
+    theatreId=mdb_theatre[0]._id;
+    theatreId=theatreId.toString();
+});
 
 test.afterAll(async ()=>{
     await MongoConnect('test','bookings');
     await deleteMongoRecords();
 
     await MongoConnect('test','shows');
-    await updateMongoRecordToEmptyArray(bookingId,"bookedSeats");
+    await deleteOne("name",showData.name);
 });
 
-test('User should be able to book a ticket for a move e2e', async({loggedInUserPage,movieDetailsPage,bookingDetailsPage,stripeCheckoutPage})=>{
-    const homePage = await loggedInUserPage;
+test('User should be able to book a ticket for a move e2e', async({loginPage,homePage,movieDetailsPage,bookingDetailsPage,stripeCheckoutPage,request})=>{
+    await loginPage.login(process.env.USER_EMAIL,process.env.PASSWORD);
     const movieName = movieData.movies.name;
 
     await homePage.searchBox.fill(movieName);
@@ -35,8 +50,18 @@ test('User should be able to book a ticket for a move e2e', async({loggedInUserP
     }    
 
     if (!isBookShowButtonExists) {
-        await MongoConnect('test','shows');
-        await updateOne('697c1c7f0476ba2e220e7476','date',new Date(new Date().setUTCHours(0, 0, 0, 0)));        
+        const token = await loginPage.page.evaluate(() => {
+            return localStorage.getItem("token");
+        });
+        
+        const showApi = new ShowApiService(request,token);
+        const showResponse = await showApi.addShow(movieId,theatreId,showData);
+
+        await expect(showResponse.status()).toBe(200);
+
+        const showsByTheatreResponse = await showApi.getAllShowsByTheatre(theatreId);
+        await expect(showsByTheatreResponse.status()).toBe(200);
+        
         bookingDetailsPage.page.reload({ waitUntil: 'load' });
     }
 
@@ -53,9 +78,6 @@ test('User should be able to book a ticket for a move e2e', async({loggedInUserP
     await stripeCheckoutPage.payButton.click();
 
     const bookedUrl = bookingDetailsPage.page.url();
-    const urls=bookedUrl.split('/');
-    bookingId=urls[urls.length-1];
-
     await expect(bookingDetailsPage.page).toHaveURL(/\/User/,{timeout:50000});
     await bookingDetailsPage.page.goto(bookedUrl);
 
@@ -63,7 +85,7 @@ test('User should be able to book a ticket for a move e2e', async({loggedInUserP
     await expect(bookingDetailsPage.selectedSeat(11)).toHaveClass(/booked/);
     await expect(bookingDetailsPage.showName).toContainText("Avengers Show");
     await expect(bookingDetailsPage.showDateTime).toContainText(formatDateWithOrdinal(new Date()));
-    await expect(bookingDetailsPage.showTicketPrice).toContainText("Rs. 1000/-");
-    await expect(bookingDetailsPage.showTotalSeats).toContainText("250");
-    await expect(bookingDetailsPage.showAvailableSeats).toContainText("248");
+    await expect(bookingDetailsPage.showTicketPrice).toContainText("Rs. 1500/-");
+    await expect(bookingDetailsPage.showTotalSeats).toContainText("100");
+    await expect(bookingDetailsPage.showAvailableSeats).toContainText("98");
 });

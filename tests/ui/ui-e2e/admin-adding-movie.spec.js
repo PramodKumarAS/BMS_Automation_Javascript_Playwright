@@ -1,17 +1,17 @@
-import {test,expect} from '../../../fixtures/auth.fixture';
-import { deleteOne, MongoConnect } from '../../../services/mongoDB.service';
-import {newMovie} from '../../../test-data/movie.json';
+import {test,expect} from '../../../src/fixtures/auth.fixture'
+import { deleteOne, MongoConnect } from '../../../src/utils/mongoDBHelper';
+import {newMovie} from '../../../src/test-data/movie.json';
 
 test.afterAll(async ()=>{
     await MongoConnect('test','movies');
     await deleteOne('movieName',newMovie.Name)
 });
 
-test('Admin should be able to add a new movie e2e',async({loggedInAdminPage})=>{
-    await expect(loggedInAdminPage.movieTable).toBeVisible({timeout:15000});
+test('Admin should be able to add a new movie e2e',async({loginAsAdmin})=>{
+    await expect(loginAsAdmin.movieTable).toBeVisible({timeout:15000});
   
-    const beforeCount = await loggedInAdminPage.getRecordCount();
-    const addMoiveModalPage = await loggedInAdminPage.openAddMovieModal();
+    const beforeCount = await loginAsAdmin.getRecordCount();
+    const addMoiveModalPage = await loginAsAdmin.openAddMovieModal();
 
     await addMoiveModalPage.movieName.fill(newMovie.Name);
     await addMoiveModalPage.description.fill(newMovie.Description);
@@ -22,11 +22,11 @@ test('Admin should be able to add a new movie e2e',async({loggedInAdminPage})=>{
     await addMoiveModalPage.posterURL.fill(newMovie.PosterURL);
     await addMoiveModalPage.submitButton.click();
 
-    loggedInAdminPage.page.reload()    
-    const AfterCount = await loggedInAdminPage.getRecordCount();
+    loginAsAdmin.page.reload()    
+    const AfterCount = await loginAsAdmin.getRecordCount();
     await expect(beforeCount+1).toBe(AfterCount);
     
-    const data =await loggedInAdminPage.getRowData(newMovie.Name);
+    const data =await loginAsAdmin.getRowData(newMovie.Name);
     await expect(data).toContainText(newMovie.Name);
     await expect(data).toContainText(newMovie.Description);
     await expect(data).toContainText(newMovie.MovieDuration);

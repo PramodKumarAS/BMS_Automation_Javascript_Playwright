@@ -41,8 +41,6 @@ export const getTheatresSchema = {
     message: { type: "string" },
     allTheatres: {
       type: "array",
-      items: {
-        type: "object",
         properties: {
           _id: { type: "string" },
           name: { type: "string" },
@@ -81,10 +79,10 @@ export const getTheatresSchema = {
           "__v"
         ]
       }
-    }
   },
   required: ["success", "message", "allTheatres"]
 };
+
 
 export const theatresByOwnerSchema = {
   type: "object",

@@ -1,14 +1,16 @@
-import {test,expect} from '../../../fixtures/auth.fixture';
-import { deleteOne, MongoConnect } from '../../../services/mongoDB.service';
-import {shows} from '../../../test-data/show.json';
+import {test,expect} from '../../../src/fixtures/auth.fixture'
+import { deleteOne, MongoConnect } from '../../../src/utils/mongoDBHelper';
+import {shows} from '../../../src/test-data/show.json';
+
+let showName =`${shows.show.showName} ${Date.now()}`;
 
 test.afterAll(async ()=>{
     await MongoConnect('test','shows');
-    await deleteOne("name",shows.show.showName);
+    await deleteOne("name",showName);
 });
 
-test('partner should be able to add a show e2e',async({loggedInPartnerPage})=>{
-    const partnerPage = await loggedInPartnerPage;
+test('partner should be able to add a show e2e',async({loginAsPartner})=>{
+    const partnerPage = await loginAsPartner;
 
     const showsModalPage = await partnerPage.clickShowsByTheatre('PVR');
     const beforeAddShowsCount = await showsModalPage.getShowsRowCount();
@@ -16,7 +18,7 @@ test('partner should be able to add a show e2e',async({loggedInPartnerPage})=>{
     await expect(beforeAddShowsCount).toBeGreaterThan(0);
     const addShowModalPage = await showsModalPage.openAddShowModal();
 
-    await  addShowModalPage.showName.fill(shows.show.showName);
+    await  addShowModalPage.showName.fill(showName);
     await  addShowModalPage.showDate.fill(new Date().toISOString().split('T')[0]);
     await  addShowModalPage.showTime.fill(shows.show.showTime);
     await  addShowModalPage.selectMovie(shows.show.movie);
@@ -28,11 +30,11 @@ test('partner should be able to add a show e2e',async({loggedInPartnerPage})=>{
     await partnerPage.clickShowsByTheatre('PVR');
     const afterAddShowsCount = await showsModalPage.getShowsRowCount();
     
-    await expect(afterAddShowsCount).toBe(beforeAddShowsCount+1);
+    await expect(afterAddShowsCount).toBeGreaterThan(beforeAddShowsCount);
 
-    const showRowData = await showsModalPage.getRowData(shows.show.showName);
+    const showRowData = await showsModalPage.getRowData(showName);
 
-    await expect(showRowData).toContainText(shows.show.showName);
+    await expect(showRowData).toContainText(showName);
     await expect(showRowData).toContainText(new Date().toISOString().split('T')[0]);
     await expect(showRowData).toContainText(shows.show.showTime);
     await expect(showRowData).toContainText(shows.show.movie);

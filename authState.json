@@ -1,0 +1,14 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "https://bookmyshow-ihmd.onrender.com",
+      "localStorage": [
+        {
+          "name": "token",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2Y5Yzk1ZGRmNWUyMTM4NjkyZGEzNTUiLCJyb2xlIjoiVXNlciIsImlhdCI6MTc3NjM5MzIzNCwiZXhwIjoxNzc2Mzk2ODM0fQ.VGWSnzxPOl5MnrJIS-3K2KoxMOEoR5slBtQPRvNFo2g"
+        }
+      ]
+    }
+  ]
+}

@@ -14,19 +14,28 @@ const loginSchema = {
 
 const registerSchema = {
   type: "object",
-  required: ["success", "message"],
+  required: ["success", "message","data"],
   properties: {
     success: { type: "boolean" },
-    message: { type: "string" }
+    message: { type: "string" },
+    data:{
+      type:"object",
+      required: ["userId", "email","role"],
+      properties: {
+        userId: { type: "string" },
+        email: { type: "string" },
+        role: { type: "string" },
+      }
+    }
   },
   additionalProperties: false
 };
 
 const forgetPasswordSchema = {
   type: "object",
-  required: ["status", "message"],
+  required: ["success", "message"],
   properties: {
-    status: { type: "string" },
+    success: { type: "boolean" },
     message: { type: "string" }
   },
   additionalProperties: false

@@ -1,0 +1,29 @@
+{
+  "paymentDetails":
+    {
+        "token": {
+            "id": "tok_1TMJWx4FA6mIWZeoR9IZrcqA",
+            "object": "token",
+            "card": {
+            "id": "card_1TMJWx4FA6mIWZeox5UtQV2B",
+            "object": "card",
+            "brand": "Visa",
+            "country": "US",
+            "cvc_check": "unchecked",
+            "exp_month": 2,
+            "exp_year": 2028,
+            "funding": "debit",
+            "last4": "5556",
+            "name": "pramodkumaras143@gmail.com",
+            "regulated_status": "unregulated"
+            },
+            "client_ip": "122.183.54.78",
+            "created": 1776221419,
+            "email": "pramodkumaras143@gmail.com",
+            "livemode": false,
+            "type": "card",
+            "used": false
+        },
+        "amount": 1500
+    }
+}

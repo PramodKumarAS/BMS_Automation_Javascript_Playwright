@@ -1,21 +1,20 @@
-import { test,expect } from "../../../../fixtures/auth.fixture";
-import data from "../../../../test-data/user.json";
+import { test,expect } from "../../../../src/fixtures/auth.fixture";
+import data from "../../../../src/test-data/user.json";
 
-test('User should see search movie box and user menu on the home page', async ({ loggedInUserPage }) => {
-    await expect(loggedInUserPage.bannerHeader).toBeVisible();
-    await expect(loggedInUserPage.banner).toContainText('User');
-    await expect(loggedInUserPage.searchBox).toBeVisible();
- 
-    await loggedInUserPage.openUserMenu();
-    await expect(loggedInUserPage.profileLink).toBeVisible();
-    await expect(loggedInUserPage.logoutLink).toBeVisible();
+test('User should see search movie box and user menu on the home page',{tag:["@smoke"]}, async ({ loginAsUser }) => {
+    await expect(loginAsUser.bannerHeader).toBeVisible();
+    await expect(loginAsUser.banner).toContainText('User');
+    await expect(loginAsUser.searchBox).toBeVisible();
+
+    await loginAsUser.openUserMenu();
+    await expect(loginAsUser.profileLink).toBeVisible();
+    await expect(loginAsUser.logoutLink).toBeVisible();
 });
 
-test('User should see profile information and settings on the user profie page',async({loggedInUserPage})=>{
+test('User should see profile information and settings on the user profie page',async({loginAsUser})=>{
     const {userName,email} =data.users.User;
-
-    const profilePage =await loggedInUserPage.goToProfile();
-
+    const profilePage =await loginAsUser.goToProfile();
+    
     await expect(profilePage.userProfileImage).toBeVisible();
     await expect(profilePage.userName).toContainText(userName);
     await expect(profilePage.userMail).toContainText(email);

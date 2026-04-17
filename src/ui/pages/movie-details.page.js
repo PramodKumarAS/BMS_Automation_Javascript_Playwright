@@ -4,7 +4,7 @@ class MovieDetailsPage{
     }
 
     get bookShowButton(){
-        return this.page.getByRole('button',{name:'Book Show'});
+        return this.page.getByRole('button',{name:'Book Show'}).nth(1);
     }
 
     async chooseTheDate() {
