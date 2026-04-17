@@ -7,10 +7,8 @@ export default defineConfig({
   timeout: 60 * 1000,
   reporter: 'allure-playwright',
   retries:2,
-  globalSetup: require.resolve("./src/global-setup"),
 
   use: {
-    storageState:"authState.json",
     headless: false,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
