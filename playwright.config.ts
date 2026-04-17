@@ -5,7 +5,10 @@ dotenv.config();
 export default defineConfig({
   testDir: './tests',
   timeout: 60 * 1000,
-  reporter: 'allure-playwright',
+  outputDir: 'reports/test-results',   
+  reporter: [
+    ['allure-playwright', { resultsDir: 'reports/allure-results' }]
+  ],
   retries:2,
 
   use: {
@@ -27,7 +30,7 @@ export default defineConfig({
         baseURL: process.env.UI_BASE_URL,
         launchOptions: {
           args: ['--start-maximized'],
-        },
+        },  
       },
     },
 
