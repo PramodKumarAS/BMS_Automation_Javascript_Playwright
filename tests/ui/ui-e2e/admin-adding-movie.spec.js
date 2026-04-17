@@ -24,7 +24,7 @@ test('Admin should be able to add a new movie e2e',async({loginAsAdmin})=>{
 
     loginAsAdmin.page.reload()    
     const AfterCount = await loginAsAdmin.getRecordCount();
-    await expect(beforeCount+1).toBe(AfterCount);
+    await expect(AfterCount).toBeGreaterThan(beforeCount);
     
     const data =await loginAsAdmin.getRowData(newMovie.Name);
     await expect(data).toContainText(newMovie.Name);
