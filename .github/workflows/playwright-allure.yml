@@ -28,7 +28,7 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # 🔹 Run Smoke Tests for PR
+      # Run Smoke Tests for PR
       - name: Run Smoke Tests
         if: github.event_name == 'pull_request'
         run: npx playwright test --grep @smoke
@@ -41,7 +41,7 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
           MONGO_URL: ${{ secrets.MONGO_URL }}
 
-      # 🔹 Run Full Regression on Main Push
+      # Run Full Regression on Main Push
       - name: Run Full Regression Tests
         if: github.ref == 'refs/heads/main'
         run: npx playwright test

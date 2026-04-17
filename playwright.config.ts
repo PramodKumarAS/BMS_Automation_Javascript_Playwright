@@ -33,7 +33,7 @@ export default defineConfig({
 
     // 🔹 API Project
     {
-      name: 'ui-chromium',
+      name: 'api-chromium',
       testDir: './tests/api',
       use: {
         browserName: 'chromium',
