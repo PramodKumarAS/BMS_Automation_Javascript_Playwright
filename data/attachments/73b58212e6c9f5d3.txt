@@ -1,0 +1,2 @@
+strict mode: missing type "object" for keyword "required" at "#/properties/movies" (strictTypes)
+strict mode: missing type "object" for keyword "properties" at "#/properties/movies" (strictTypes)
