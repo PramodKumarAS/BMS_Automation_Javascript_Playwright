@@ -1,2 +1,0 @@
-strict mode: missing type "object" for keyword "required" at "#/properties/allTheatres" (strictTypes)
-strict mode: missing type "object" for keyword "properties" at "#/properties/allTheatres" (strictTypes)
